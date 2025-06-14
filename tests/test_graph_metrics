@@ -1,0 +1,11 @@
+import pytest
+import numpy as np
+from hawkesnest.metrics.graph import spectral_norm, modularity, alpha_graph
+
+def test_graph_metrics_identity():
+    A = np.eye(3) * 0.5
+    assert spectral_norm(A) == pytest.approx(0.5)
+    Q = modularity(A)
+    assert 0 <= Q <= 1
+    ag = alpha_graph(A, norm_max=1.0, Q_max=1.0)
+    assert 0 <= ag <= 1

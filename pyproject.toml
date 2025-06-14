@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=46.4.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hawkesnest"
+version = "0.1.0"
+description = "Spatio-temporal & relational pattern simulator"
+readme = "README.md"
+requires-python = ">=3.8"
+authors = [
+  { name = "Your Name", email = "you@example.com" }
+]
+license = { text = "MIT" }
+
+dependencies = [
+  "numpy>=1.21",
+  "scipy>=1.7",
+  "scikit-learn>=1.0",
+  "networkx>=2.6",
+  "python-louvain>=0.16",
+  "pydantic>=1.10",
+  "click>=8.0",
+  "osmnx>=1.1.2",
+  "shapely>=1.8",
+  "geopy>=2.2",
+  "tqdm>=4.62",
+  "matplotlib>=3.4"
+]
+
+[project.optional-dependencies]
+all = [
+  "osmnx",
+  "geopy",
+  "tqdm"
+]
+dev = [
+  "pytest",
+  "pytest-cov",
+  "flake8",
+  "mypy",
+  "pre-commit",
+]
+[project.scripts]
+hawkesnest = "hawkesnest.cli:cli"
