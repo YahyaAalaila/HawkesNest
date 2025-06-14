@@ -1,5 +1,7 @@
 import pytest
+
 from hawkesnest.simulator.hawkes import HawkesSimulator
+
 
 def test_simulator_runs():
     sim = HawkesSimulator()

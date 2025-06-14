@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 import abc
-from dataclasses import dataclass
-from typing import Tuple, Protocol
+from typing import Protocol, Tuple
 
 import numpy as np
 
@@ -15,28 +14,31 @@ class BackgroundBase(abc.ABC):
 
     Subclasses must be *callable* and return a non‑negative float when
     evaluated at a single space–time coordinate.  They must also implement a
-    vectorised variant :py:meth:`batch` for performance‑critical looping.
+    vectorised variant: :py:meth:`batch` for performance‑critical looping.
     """
 
     @abc.abstractmethod
-    def __call__(self, s: np.ndarray, t: float, m: int | None = None) -> float:  # noqa: D401,E501
+    def __call__(
+        self, s: np.ndarray, t: float, m: int | None = None
+    ) -> float:  # noqa: D401,E501
         """Evaluate μ(s, t)."""
-        
 
     # ---------------------------------------------------------------------
     # Optional convenience helpers
     # ---------------------------------------------------------------------
 
-    def batch(self, S: np.ndarray, T: np.ndarray, M: np.ndarray | None = None) -> np.ndarray:
+    def batch(
+        self, S: np.ndarray, T: np.ndarray, M: np.ndarray | None = None
+    ) -> np.ndarray:
         """Vectorised evaluation on many points (used by the simulator).
 
         Parameters
         ----------
-        S : (n, 2) array
+        S: (n, 2) array
             Spatial coordinates.
-        T : (n,) array
+        T: (n,) array
             Time stamps.
-        M : (n,) array, optional
+        M: (n,) array, optional
             Marks; not all background models care about marks.
         """
         n = S.shape[0]
@@ -44,4 +46,3 @@ class BackgroundBase(abc.ABC):
         for i in range(n):
             out[i] = self(S[i], float(T[i]), int(M[i]) if M is not None else None)
         return out
-    
