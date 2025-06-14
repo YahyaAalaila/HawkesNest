@@ -8,37 +8,33 @@ normalized to [0,1].
 """
 
 import numpy as np
-from scipy.spatial import cKDTree
-from typing import Tuple
 from sklearn.neighbors import KernelDensity
 
 
-def alpha_het(events: np.ndarray,
-              r_max: float,
-              h_max: float,
-              n_r: int = 20,
-              n_h: int = 20) -> float:
+def alpha_het(
+    events: np.ndarray, r_max: float, h_max: float, n_r: int = 20, n_h: int = 20
+) -> float:
     """
     Estimate the heterogeneity index from event data.
 
     Parameters
     ----------
-    events : array_like of shape (n, 3)
+    events: array_like of shape (n, 3)
         Each row is (x, y, t).
-    r_max : float
+    r_max: float
         Maximum spatial lag to consider.
-    h_max : float
+    h_max: float
         Maximum temporal lag to consider.
-    n_r, n_h : int
+    n_r, n_h: int
         Number of bins for spatial and temporal integration.
 
     Returns
     -------
-    alpha : float
+    alpha: float
         Heterogeneity index in [0, 1].
     """
     # 1. Fit background intensity via 3D KDE on (x, y, t)
-    kde = KernelDensity(kernel='epanechnikov', bandwidth=0.1)
+    kde = KernelDensity(kernel="epanechnikov", bandwidth=0.1)
     kde.fit(events)
 
     # 2. Estimate inhomogeneous K(r,h)
@@ -65,7 +61,7 @@ def alpha_het(events: np.ndarray,
     # normalize by domain area*time (assumed 1) and edge-correction omitted
 
     # 3. Compute homogeneous K = pi r^2 h
-    R, H = np.meshgrid(rs, hs, indexing='ij')
+    R, H = np.meshgrid(rs, hs, indexing="ij")
     K_hpp = np.pi * R**2 * H
 
     # 4. Integrate absolute difference

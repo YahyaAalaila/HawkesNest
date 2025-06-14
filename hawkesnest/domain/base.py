@@ -1,7 +1,8 @@
-# hawkesnest/domain/base.py
 from __future__ import annotations
+
 import abc
 from typing import Tuple
+
 
 class SpatialDomain(abc.ABC):
     """
@@ -15,7 +16,7 @@ class SpatialDomain(abc.ABC):
         """
         ...
 
-    #@abc.abstractmethod
+    # @abc.abstractmethod
     def contains(self, point: Tuple[float, float]) -> bool:
         """
         Test if `point` lies inside the domain.
@@ -24,10 +25,11 @@ class SpatialDomain(abc.ABC):
 
     def geodesic(self, u: Tuple[float, float], v: Tuple[float, float]) -> float:
         """
-        Distance between two points.  
+        Distance between two points.
         Default is Euclidean; override in NetworkDomain.
         """
         import math
+
         return math.hypot(u[0] - v[0], u[1] - v[1])
 
     def area(self) -> float:

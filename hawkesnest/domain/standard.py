@@ -1,7 +1,7 @@
-# hawkesnest/domain/examples.py
+# Module implementing simple rectangular spatial domains.
 
 from hawkesnest.domain.base import SpatialDomain
-import numpy as np
+
 
 class RectangleDomain(SpatialDomain):
     def __init__(self, x_min, x_max, y_min, y_max):
@@ -10,8 +10,7 @@ class RectangleDomain(SpatialDomain):
 
     def sample_point(self, rng):
         x_min, x_max, y_min, y_max = self.bounds
-        return (rng.uniform(x_min, x_max),
-                rng.uniform(y_min, y_max))
+        return (rng.uniform(x_min, x_max), rng.uniform(y_min, y_max))
 
     def contains(self, point):
         x, y = point

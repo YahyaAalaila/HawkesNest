@@ -12,8 +12,9 @@ Where:
 - norm_max < 1 is the max spectral norm under stability (default 0.95).
 - Q_max is the theoretical or empirically observed maximum modularity (default 1.0).
 """
-import numpy as np
 import networkx as nx
+import numpy as np
+
 try:
     from community import community_louvain
 except ImportError:
@@ -36,30 +37,28 @@ def modularity(A: np.ndarray) -> float:
     if community_louvain is None:
         raise ImportError("Please install python-louvain to compute modularity.")
     # Compute best partition
-    partition = community_louvain.best_partition(G, weight='weight')
+    partition = community_louvain.best_partition(G, weight="weight")
     # Compute modularity
-    Q = community_louvain.modularity(partition, G, weight='weight')
+    Q = community_louvain.modularity(partition, G, weight="weight")
     return float(Q)
 
 
-def alpha_graph(A: np.ndarray,
-                norm_max: float = 0.95,
-                Q_max: float = 1.0) -> float:
+def alpha_graph(A: np.ndarray, norm_max: float = 0.95, Q_max: float = 1.0) -> float:
     """
     Compute the multi-type relation complexity index in [0,1].
 
     Parameters
     ----------
-    A : np.ndarray
+    A: np.ndarray
         MxM branching matrix of expected offspring means.
-    norm_max : float
+    norm_max: float
         Maximum allowed spectral norm under stability (default 0.95).
-    Q_max : float
+    Q_max: float
         Maximum modularity for normalization (default 1.0).
 
     Returns
     -------
-    alpha : float
+    alpha: float
         Complexity index combining spectral norm and modularity.
     """
     # Spectral norm component

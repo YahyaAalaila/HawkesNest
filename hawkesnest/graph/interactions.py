@@ -1,37 +1,36 @@
-# hawkesnest/graph/interaction.py
 """
 MarkInteractionGraph: encapsulates the multi-type adjacency matrix, computes
 its spectral norm, modularity, and combined complexity index.
 Also supports estimation of the branching matrix from event data.
 """
+
 from __future__ import annotations
 
-import numpy as np
-import networkx as nx
 from typing import Callable, Sequence, Tuple
+
+import networkx as nx
+import numpy as np
+
 try:
     import community as community_louvain
 except ImportError:
     community_louvain = None
 
+
 class MarkInteractionGraph:
     """
     Graph of marks with weighted, directed edges capturing branching ratios.
     """
-    def __init__(
-        self,
-        A: np.ndarray,
-        norm_max: float = 0.95,
-        Q_max: float = 1.0
-    ):
+
+    def __init__(self, A: np.ndarray, norm_max: float = 0.95, Q_max: float = 1.0):
         """
         Parameters:
         -----------
-        A : (M, M) array
+        A: (M, M) array
             Branching ratios eta_{mn} where A[m, n] is expected offspring of type m from type n.
-        norm_max : float
+        norm_max: float
             Maximum expected spectral norm under stability (default 0.95).
-        Q_max : float
+        Q_max: float
             Maximum modularity (default 1.0).
         """
         self.A = A
@@ -42,10 +41,7 @@ class MarkInteractionGraph:
 
     @classmethod
     def from_branching_matrix(
-        cls,
-        A: np.ndarray,
-        norm_max: float = 0.95,
-        Q_max: float = 1.0
+        cls, A: np.ndarray, norm_max: float = 0.95, Q_max: float = 1.0
     ) -> MarkInteractionGraph:
         """Construct directly from known branching matrix."""
         return cls(A.copy(), norm_max=norm_max, Q_max=Q_max)
@@ -54,11 +50,11 @@ class MarkInteractionGraph:
     def estimate_from_events(
         cls,
         events: Sequence[Tuple[np.ndarray, float, int]],
-        kernel_funcs: dict[Tuple[int,int], Callable],
+        kernel_funcs: dict[Tuple[int, int], Callable],
         domain: any,
         max_lag: float = None,
         norm_max: float = 0.95,
-        Q_max: float = 1.0
+        Q_max: float = 1.0,
     ) -> MarkInteractionGraph:
         """
         Estimate A from event history and known kernel shapes by integrating
@@ -69,7 +65,7 @@ class MarkInteractionGraph:
         domain: provides integration bounds for spatial and temporal dims
         max_lag: optional temporal cutoff for integration
         """
-        M = max(m for *_ , m in events) + 1
+        M = max(m for *_, m in events) + 1
         A = np.zeros((M, M), dtype=float)
         # integrate phi over space-time or approximate by Monte Carlo
         # here we assume kernel_funcs returns normalized pdf times eta
@@ -100,7 +96,7 @@ class MarkInteractionGraph:
                     else:
                         # symmetrize by summing both directions
                         if G.has_edge(m, n):
-                            G[m][n]['weight'] += w
+                            G[m][n]["weight"] += w
                         else:
                             G.add_edge(m, n, weight=w)
         self._G_undirected = G if not directed else None
@@ -119,9 +115,9 @@ class MarkInteractionGraph:
         if self._G_undirected is None:
             self.to_networkx(directed=False)
         partition = community_louvain.best_partition(
-            self._G_undirected, weight='weight', resolution=resolution
+            self._G_undirected, weight="weight", resolution=resolution
         )
-        Q = community_louvain.modularity(partition, self._G_undirected, weight='weight')
+        Q = community_louvain.modularity(partition, self._G_undirected, weight="weight")
         return float(Q)
 
     def alpha_graph(self) -> float:
