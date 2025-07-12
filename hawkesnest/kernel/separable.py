@@ -7,10 +7,9 @@ from __future__ import annotations
 import numpy as np
 from hawkesnest.kernel.base import KernelBase
 
-class ExponentialGaussianKernel:
+class ExponentialGaussianKernel(KernelBase):
     def __init__(
         self,
-        branching_ratio: float,
         temporal_scale: float,
         spatial_scale: float
     ) -> None:
@@ -19,7 +18,6 @@ class ExponentialGaussianKernel:
         temporal_scale: decay parameter for exponential in time
         spatial_scale: bandwidth for Gaussian in space
         """
-        self.eta = branching_ratio
         self.t_scale = temporal_scale
         self.s_scale = spatial_scale
     
@@ -28,9 +26,10 @@ class ExponentialGaussianKernel:
         
         g = np.exp(-tau / self.t_scale)
         h = np.exp(-0.5 * (s / self.s_scale)**2)
-        return self.eta * (g * h)
+        return (g * h)
 
     def integrate(self) -> float:
         # For separable: eta * (integral g dt) * (integral h ds) normalized
         # Here we assume g and h normalized so integrate=eta
-        return float(self.eta)
+        # TODO: check if this is correct for separable kernels
+        return 1

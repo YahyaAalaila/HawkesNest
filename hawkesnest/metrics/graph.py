@@ -69,3 +69,4 @@ def alpha_graph(A: np.ndarray, norm_max: float = 0.95, Q_max: float = 1.0) -> fl
     alpha = norm_val * np.sqrt(Q_val)
     # Clip to [0,1]
     return float(np.clip(alpha, 0.0, 1.0))
+

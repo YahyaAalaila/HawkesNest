@@ -9,8 +9,12 @@ from __future__ import annotations
 
 from hawkesnest.domain.standard import RectangleDomain  # noqa: F401
 from hawkesnest.domain.base import SpatialDomain  # noqa: F401
+from hawkesnest.domain.manhatten import GridDomain  # noqa: F401
+from hawkesnest.domain.network import NetworkDomain  # noqa: F401
 
 __all__ = [
+    "GridDomain",
     "RectangleDomain",
     "SpatialDomain",
+    "NetworkDomain",
 ]

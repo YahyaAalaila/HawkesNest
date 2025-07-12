@@ -7,6 +7,7 @@ self‑exciting interaction kernels.
 
 from __future__ import annotations
 
+from hawkesnest.background.base import BackgroundBase  # noqa: F401
 from hawkesnest.background.constant import ConstantBackground  # noqa: F401
 from hawkesnest.background.spatial import SpatialBackground  # noqa: F401
 from hawkesnest.background.spatiotemporal import (
@@ -17,6 +18,7 @@ from hawkesnest.background.temporal      import TemporalProfile, SinusoidProfile
 
 
 __all__ = [
+    "BackgroundBase",
     "ConstantBackground",
     "SpatialBackground",
     "SeparableBackground",
