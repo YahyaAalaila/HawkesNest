@@ -86,9 +86,14 @@ network-constrained cascades.
 
 ---
 
-## Installation
+## Installation  <!-- still under active development -->
+
+> ⚠️ **Development status:** HawkesNest is a work-in-progress.  
+> The API may change without notice and some modules are still experimental.  
+> If you hit issues, please open an issue or PR—feedback is welcome!
 
 ```bash
 git clone https://github.com/your-org/hawkesnest.git
 cd hawkesnest
-pip install -e .        # Python 3.9 +
+pip install -e .        # Python 3.9+
+
