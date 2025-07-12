@@ -75,9 +75,9 @@ network-constrained cascades.
 * **Lego-style generator** – mix-and-match *domain*, *background*, *kernel* &
   *interaction graph* in a few YAML lines.
 * **Ogata thinning simulator** – with both Euclidean and geodesic distances.
-* **Complexity meters** – heterogeneity \( \alpha_{\text{het}} \), entanglement
-  \( \alpha_{\text{ent}} \), topology \( \alpha_{\text{topo}} \), graph density
-  \( \alpha_{\text{graph}} \).
+* **Complexity meters** – heterogeneity $\alpha_{\text{het}}$, entanglement
+  $\alpha_{\text{ent}}$, topology $\alpha_{\text{topo}}$, graph density
+  $\alpha_{\text{graph}}$.
 * **Preset data classes** – one-liners that instantiate high-complexity samples
   for each pillar.
 * **Extensible** – register new background surfaces, kernels, even
