@@ -1,7 +1,7 @@
 <!-- ────────────────────────── Hero ─────────────────────────── -->
 <p align="center">
   <!-- replace with an actual logo asset if you have one -->
-  <img src="assets/logo.png" alt="logo" width="250"/>
+  <img src="assets/logo.png" alt="logo" width="200"/>
 </p>
 
 <h1 align="center">HawkesNest</h1>
