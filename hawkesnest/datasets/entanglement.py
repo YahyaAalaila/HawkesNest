@@ -1,4 +1,3 @@
-# hawkesnest/datasets/entanglement.py
 from __future__ import annotations
 import copy
 from typing import Sequence, Dict, Any, Optional
@@ -19,9 +18,6 @@ class EntanglementDataset(SpatioTemporalDataset):
     change for *mid* and *high*.
     """
 
-    # ------------------------------------------------------------------ #
-    # YAML overrides for the three presets                               #
-    # ------------------------------------------------------------------ #
     _LEVEL_OVERRIDES: dict[str, Dict[str, Any]] = {
         "low":  {},                                     # just use the template
         "mid": {
@@ -33,18 +29,14 @@ class EntanglementDataset(SpatioTemporalDataset):
             ]
         },
         "high": {
-            # strong spatio-temporal coupling
             "backgrounds": [
                 {
          "type": "function", "name": "gabor_travel",
-         "a0": -10, "amp": 0.05, "fx": 0.2, "fy": 0, "ft": 0.2, "sigma": 5}
+         "a0": -2, "amp": 0.05, "fx": 0.2, "fy": 0, "ft": 0.2, "sigma": 0.5}
             ]
         },
     }
 
-    # ------------------------------------------------------------------ #
-    # constructor                                                        #
-    # ------------------------------------------------------------------ #
     def __init__(
         self,
         level: str = "low",
@@ -54,7 +46,6 @@ class EntanglementDataset(SpatioTemporalDataset):
         horizon: Optional[float] = None,
         n_realisations: int = 0,
         seed: int = 0,
-        # SpatioTemporalDataset kwargs
         fit_scaler: bool = True,
         normalise: bool = True,
         scaler: "StdScaler | None" = None,
@@ -62,12 +53,11 @@ class EntanglementDataset(SpatioTemporalDataset):
         if level not in self._LEVEL_OVERRIDES:
             raise ValueError(f"level must be one of {list(self._LEVEL_OVERRIDES)}")
 
-        # 1) merge preset → user overrides (deep copy so we don’t mutate class attr)
         pres = copy.deepcopy(self._LEVEL_OVERRIDES[level])
         if overrides:
             self._deep_merge(pres, overrides)
 
-        # 2) simulate sequences
+        
         self.seqs = simulate_pillar(
             pillar="entanglement",
             overrides=pres,
@@ -77,7 +67,6 @@ class EntanglementDataset(SpatioTemporalDataset):
             seed=seed,
         )
 
-        # 3) hand off to the generic base class
         super().__init__(
             sequences=self.seqs,
             scaler=scaler,
@@ -96,6 +85,7 @@ class EntanglementDataset(SpatioTemporalDataset):
         if which == "ent":
             # entanglement complexity: number of events
             comp = alpha_ent_kl(events, bw_joint=0.4, bw_space=0.5, bw_time=0.25)
+        # TODO: Add the rest metric
         return comp
         
     @staticmethod

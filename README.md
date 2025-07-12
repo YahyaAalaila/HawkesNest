@@ -27,17 +27,17 @@
 <table align="center">
   <tr>
     <td align="center">
-      <img src="assets/gifs/ent_evolution_evolution.gif" width="300"/>
+      <img src="assets/gifs/ent_evolution_evolution.gif" width="250"/>
       <br/>
       <strong>Spatial–temporal<br/>heterogeneity&nbsp;(α<sub>het</sub>)</strong>
     </td>
     <td align="center">
-      <img src="assets/gifs/hetero_evolution_evolution.gif" width="300"/>
+      <img src="assets/gifs/hetero_evolution_evolution.gif" width="250"/>
       <br/>
       <strong>Space–time<br/>entanglement&nbsp;(α<sub>ent</sub>)</strong>
     </td>
     <td align="center">
-      <img src="assets/gifs/topo_evolution_evolution.gif" width="300"/>
+      <img src="assets/gifs/topo_evolution_evolution.gif" width="250"/>
       <br/>
       <strong>Network topology<br/>distortion&nbsp;(α<sub>topo</sub>)</strong>
     </td>
