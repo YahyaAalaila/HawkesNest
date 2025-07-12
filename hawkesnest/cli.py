@@ -1,5 +1,5 @@
 import click
-from .simulator.hawkes import HawkesSimulator
+from hawkesnest.simulator.hawkes import HawkesSimulator
 
 @click.group()
 def cli():

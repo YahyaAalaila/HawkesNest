@@ -10,13 +10,16 @@ from typing import Dict, Optional, Tuple
 import numpy as np
 import pandas as pd
 
-from hawkesnest.background.base import BackgroundBase
-from hawkesnest.domain.base import SpatialDomain
-from hawkesnest.domain.standard import RectangleDomain
-from hawkesnest.kernel.base import KernelBase
-from hawkesnest.simulator.base import SimulatorBase
+from hawkesnest.background import BackgroundBase
+from hawkesnest.domain import SpatialDomain
+from hawkesnest.domain import RectangleDomain
+from hawkesnest.kernel import KernelBase
+from hawkesnest.simulator import SimulatorBase
 from hawkesnest.utils.thinning import thinning
+from yaml import warnings
 
+_DEFAULT_HORIZON = 100.0        # module-level constant
+_UNSET = object()               # sentinel if you ever need it
 
 class HawkesSimulator(SimulatorBase):
     """
@@ -44,31 +47,65 @@ class HawkesSimulator(SimulatorBase):
 
     def simulate(
         self,
-        n: int,
+        n: Optional[int] = None,
+        horizon: Optional[float] = None,
         seed: Optional[int] = None,
     ) -> Tuple[pd.DataFrame, pd.Series]:
         """
         Simulate n events. Returns DataFrame of events and Series of parent labels.
         """
+        
         rng = np.random.default_rng(seed)
+        n_acc, time_horizon = self._resolve_n_horizon(n, horizon)
+        
         # Thinning returns list of dicts with keys 't','x','y','m','parent'
         events = thinning(
             background=self.background,
             kernel=self.kernels,
-            time_horizon=None,  # No fixed time horizon
+            time_horizon=time_horizon,  # No fixed time horizon
             domain=self.domain,
             adjacency=self.adjacency,
             Lambda=self.lambda_max,
-            n_acc=n,
+            n_acc=n_acc,
             rng=rng,
         )
-        df = pd.DataFrame(events)
-        # Rename 'type' to 'm' if needed
-        if "type" in df.columns:
-            df = df.rename(columns={"type": "m"})
-        # Extract labels if available
-        labels = df["parent"] if "parent" in df.columns else pd.Series([None] * len(df))
-        # Finalize events DataFrame
-        df = df[["t", "x", "y", "m"]]
-        df = df.sort_values("t").reset_index(drop=True)
+        
+        df = (
+            pd.DataFrame(events)
+            .rename(columns=lambda c: "m" if c == "type" else c)
+            .assign(parent=lambda d: d.get("parent", pd.Series([None]*len(d), index=d.index)))
+            .loc[:, ["t", "x", "y", "m", "is_triggered", "parent"]]
+            .sort_values("t")
+            .reset_index(drop=True)
+        )
+
+        # Now pull off the labels
+        labels = df.pop("parent")
         return df, labels
+    
+    @staticmethod
+    def _resolve_n_horizon(
+        n: Optional[int],
+        horizon: Optional[float],
+        *,
+        default_horizon: float = _DEFAULT_HORIZON,
+    ) -> Tuple[Optional[int], Optional[float]]:
+        """
+        Return a pair (n_acc, time_horizon) suitable for the `thinning` call.
+
+        Exactly one of ``n`` or ``horizon`` should be provided.
+        """
+        if (n is not None) and (horizon is not None):
+            warnings.warn(
+                "Both 'n' and 'horizon' were provided; "
+                "ignoring both and using default horizon.",
+                UserWarning,
+                stacklevel=2,
+            )
+            return None, default_horizon
+
+        if (n is None) and (horizon is None):
+            return None, default_horizon
+
+        # Exactly one is set – map to the names expected by `thinning`
+        return (n, None) if n is not None else (None, horizon)

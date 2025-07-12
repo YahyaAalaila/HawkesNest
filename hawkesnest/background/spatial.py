@@ -1,29 +1,11 @@
 from typing import Sequence, Tuple, Union
-
 import numpy as np
 
 from hawkesnest.background.base import BackgroundBase
 
-# class SpatialBackground(BackgroundBase):
-#     """Static spatial field μ(s) represented as a Gaussian mixture."""
-
-#     def __init__(self, centers: np.ndarray, weights: np.ndarray, sigma: float) -> None:
-#         self.centers = centers  # (K, 2)
-#         w = np.asarray(weights, dtype=float)
-#         self.weights = w / w.sum()
-#         self.sigma2 = sigma ** 2
-#         self.norm = (2 * np.pi * self.sigma2) ** 1
-
-#     def __call__(self, s: np.ndarray, t: float, m: int | None = None) -> float:  # noqa: D401,E501
-#         diffs = s - self.centers  # (K, 2)
-#         exps = np.exp(-0.5 * np.sum(diffs**2, axis=1) / self.sigma2)
-#         return float((self.weights * exps).sum() / self.norm)
-
-
 """
 Static spatial field μ(s) represented as a Gaussian mixture with per-component variances.
 """
-
 
 class SpatialBackground(BackgroundBase):
     """Gaussian-mixture background with individual variances for each component."""

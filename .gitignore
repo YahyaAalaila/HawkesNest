@@ -34,3 +34,15 @@ coverage.xml
 # OS files
 .DS_Store
 Thumbs.db
+
+results/
+quick_results/
+kde_plots/
+fig72style/
+Experiments/
+data/
+csr_cache/
+
+fig_*
+topology_metric_vs_nodes.png
+.mypy_cache/

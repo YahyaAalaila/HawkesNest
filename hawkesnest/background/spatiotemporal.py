@@ -1,5 +1,4 @@
 from typing import Callable
-
 import numpy as np
 
 from hawkesnest.background.base import BackgroundBase
