@@ -173,3 +173,9 @@ events_df.to_csv("sine_sep.csv", index=False)
   - integrate **your own simulator** and expose it on the CLI,
   - register custom building blocks (*kernels*, *backgrounds*, *domains*, …) so they work inside YAML configs,
   - implement a **new metric** for an existing complexity pillar – or define an entirely new pillar.
+
+## License
+
+HawkesNest is licensed under the **Apache License 2.0**.  
+See the [LICENSE](./LICENSE) file for full text and the NOTICE file for third-party attributions.
+
