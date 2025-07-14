@@ -88,3 +88,21 @@ def thinning(
     # ensure sorted by time
     events.sort(key=lambda e: e["t"])
     return events
+
+
+def auto_lambda(func, n_grid = 200):
+    """Crude upper bound by scanning the unit cube grid."""
+    # TODO: I am sure there is a better way to do this
+    xs = np.linspace(0, 1, n_grid)
+    ys = np.linspace(0, 1, n_grid)
+    ts = np.linspace(0, 1, n_grid)
+    # build grid of spatial points
+    X, Y = np.meshgrid(xs, ys)                  # both shape (n_grid,n_grid)
+    pts = np.stack((X.ravel(), Y.ravel()), axis=1)   # shape (n_grid*n_grid, 2)
+    # evaluate background.surface (or kernel) at each point individually
+    vals = np.empty(len(pts), dtype=float)
+    for i, p in enumerate(pts):
+        vals[i] = func(p, 300)                    # now p is a 1D array of length 2
+
+    lam = vals.reshape(X.shape)                 # back to (n_grid,n_grid)
+    return float(np.nanmax(lam))

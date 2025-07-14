@@ -1,13 +1,15 @@
 # hawkesnest/domain/network.py
 from __future__ import annotations
 import random, math
-from typing import Tuple, Sequence
+from typing import Tuple
 
 import networkx as nx
 import numpy as np
 
+from hawkesnest.domain.base import SpatialDomain
 
-class NetworkDomain:
+
+class NetworkDomain(SpatialDomain):
     """
     Spatial support = a (multi)graph with edge lengths in the 'length' attr.
     """
@@ -17,8 +19,9 @@ class NetworkDomain:
         ys = [float(d["y"]) for _, d in G.nodes(data=True)]
         self.x_min, self.x_max = min(xs), max(xs)
         self.y_min, self.y_max = min(ys), max(ys)
+        super().__init__(self.x_min,  self.x_max,  self.y_min,  self.y_max)
         # or as a tuple:
-        self.bounds = [self.x_min, self.x_max, self.y_min, self.y_max]
+        #self.bounds = [self.x_min, self.x_max, self.y_min, self.y_max]
         if not nx.get_edge_attributes(G, "length"):
             # if missing: use Euclidean edge length as default
             for u, v, d in G.edges(data=True):

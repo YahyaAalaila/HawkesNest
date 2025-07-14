@@ -15,6 +15,8 @@ from pydantic import BaseModel, model_validator
 from hawkesnest.config_factory import DomainConfig, BackgroundCfg, KernelCfg
 from hawkesnest.simulator import HawkesSimulator
 
+from hawkesnest.utils.thinning import auto_lambda
+
 
 class SimulatorConfig(BaseModel):
     domain: DomainConfig
@@ -62,15 +64,17 @@ class SimulatorConfig(BaseModel):
         data["kernels"] = grid
         
         return data
-
+    
 
     def build(self) -> HawkesSimulator:
         """Build a HawkesSimulator from this configuration."""
         self.domain = self.domain.build()
         # build and dispatch backgrounds
-        bg_objs = []
+        bg_objs, lamdas = [], []
         for i, bg in enumerate(self.backgrounds):
-            bg_objs.append(bg.build(i))
+            bg_i = bg.build(i)
+            lamdas.append(auto_lambda(bg_i))
+            bg_objs.append(bg_i)
         #bg_objs = [ bg.build(i) for i, bg in enumerate(self.backgrounds) ]
         def bg_fn(space: np.ndarray, t: float, mark: int) -> float:
             if mark < 1 or mark > len(bg_objs):
@@ -84,6 +88,12 @@ class SimulatorConfig(BaseModel):
             for i, row in enumerate(self.kernels)
             for j, cfg in enumerate(row)
         }
+    
+        # ker = kernel_dict[1, 1]
+        # lamdas = lamdas + auto_lambda(ker)
+        print(f"[DEBUG] lambda_max before = {self.lambda_max}")
+        self.lambda_max = 10 * max(lamdas)
+        print(f"[DEBUG] lambda_max after = {self.lambda_max}")
         # adjacency
         M = len(bg_objs)
         adj = np.array(self.adjacency, dtype=float) if self.adjacency else np.eye(M)

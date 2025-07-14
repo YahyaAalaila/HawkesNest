@@ -67,7 +67,7 @@ def _poly_entangled(
         space: np.ndarray,
         t: float,
         *,
-        aa0:  float = 1.0,        # constant offset
+        aa0:  float = .0,        # constant offset
         ent:  float = 1.0,        # 1st-order cross (t·x, t·y)
         quad: float = 0.0,        # 2nd-order cross (t²x², t²y²)
         lin:  float = 0.0,        # linear terms (x+y+t)
@@ -96,7 +96,7 @@ def _poly_entangled(
     )
 
     lam = scale * np.exp(z_raw)
-    return lam
+    return z_raw
 
 
 
