@@ -26,62 +26,6 @@ TEMPLATES: dict[str, str] = {
     for pillar in ("entanglement", "heterogeneity", "topology")
 }
 
-# # ----------------------------------------------------------------------
-# def simulate_pillar(
-#         pillar: str,
-#         *,
-#         overrides: Dict[str, Any] | None = None,
-#         n_realisations: int = 0,
-#         n_events: int | None = None,
-#         horizon: float | None = None,
-#         seed: int = 0,
-# ) -> List[np.ndarray]:
-#     """
-#     Generic simulator:  returns a *list* of NumPy sequences.
-
-#     Parameters
-#     ----------
-#     pillar         – one of {"entanglement", "heterogeneity", "topology"}
-#     overrides      – dict that is **merged** into the base YAML (deep-update)
-#     n_realisations – how many independent draws to simulate
-#     n_events       – target number of events per draw
-#     seed           – RNG seed
-#     """
-#     base_yaml = yaml.safe_load(TEMPLATES[pillar])
-
-#     # ---------------------------------------------------------------
-#     # 1) apply overrides (recursive update)
-#     # ---------------------------------------------------------------
-#     if overrides:
-#         def _deep_merge(dst, src):
-#             for k, v in src.items():
-#                 if isinstance(v, dict) and k in dst and isinstance(dst[k], dict):
-#                     _deep_merge(dst[k], v)
-#                 else:
-#                     dst[k] = v
-#         _deep_merge(base_yaml, overrides)
-
-#     # ---------------------------------------------------------------
-#     # 2) build simulator + generate sequences
-#     # ---------------------------------------------------------------
-#     cfg  = SimulatorConfig.model_validate(base_yaml)
-#     print(f"[DEBUG utils/simulate] building simulator from {cfg.domain} template")
-#     rng  = np.random.default_rng(seed)
-#     sim = cfg.build()
-    
-
-#     if n_realisations == 0:
-#         seqs, _ = sim.simulate(n=n_events,
-#                                      seed=int(rng.integers(1e9)))
-#     else:
-#         seqs = []
-#         for _ in range(n_realisations):
-#             ev, _ = sim.simulate(n=n_events,
-#                                         seed=int(rng.integers(1e9)))
-#             seqs.append(ev[['t', 'x', 'y', 'm']]
-#                         .to_numpy(dtype=np.float32))
-#     return seqs
-
 def _resolve_sim_args(
     *,
     n_events: Optional[int],
