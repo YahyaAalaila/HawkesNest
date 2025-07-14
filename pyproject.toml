@@ -25,7 +25,8 @@ dependencies = [
   "shapely>=1.8",
   "geopy>=2.2",
   "tqdm>=4.62",
-  "matplotlib>=3.4"
+  "matplotlib>=3.4",
+  "torch>=2.6.0"
 ]
 
 [project.optional-dependencies]
