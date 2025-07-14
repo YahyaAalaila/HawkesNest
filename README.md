@@ -86,14 +86,90 @@ network-constrained cascades.
 
 ---
 
-## Installation  <!-- still under active development -->
+## Get started  <!-- still under active development -->
 
 > ⚠️ **Development status:** HawkesNest is a work-in-progress.  
 > The API may change without notice and some modules are still experimental.  
 > If you hit issues, please open an issue or PR—feedback is welcome!
 
+## Instalation
+
 ```bash
 git clone https://github.com/your-org/hawkesnest.git
 cd hawkesnest
 pip install -e .        # Python 3.9+
+```
 
+## Generate out-the-box datasets
+To generate shipped synthetic spatio-temporal datasets. The hawkesnest console script provides a sub-command simulate-entanglement to generate pre-baked entanglement data at three complexity levels (`low`, `mid`, or `high`).
+⚠️ **Development status:** Only entangelement is pre-baked now, future updates (soon), will include the rest of the pillars.
+
+```bash
+hawkesnest simulate-entanglement --level <low|mid|high> --n-events <N> --out <path.csv>
+```
+
+ - `--level` selects complexity: `low`, `mid`, or `high`.
+ - `--n-events` is the number of events to simulate (default: `500`).
+ - `--out` is the path to write the resulting CSV (default: `entanglement.csv`).
+
+ # Example 
+ ```bash
+ hawkesnest simulate-entanglement --level mid --n-events 1000 --out ent_mid.csv
+```
+
+## Direct simulation with flexibility
+Other than read-to-use datasets, the user can specify the building blocks for HawkesNest to simulate data with specific settings. 
+
+# YAML‑driven experiments (recommended for large sweeps)
+
+```bash
+# Simulation space
+domain:
+  type: rectangle
+  x_min: 0
+  x_max: 1000
+  y_min: 0
+  y_max: 1000
+
+lambda_max: 20            # safety bound (> maximum row‑sum of branching)
+
+# Background intensity (one entry per mark)
+backgrounds:
+  - {type: function, name: sine, amp: 1.0, freq: 0.5}
+
+# Triggering kernel (same kernel reused for all i→j pairs)
+kernels:
+  - [{type: separable}]   # uses default branching_ratio=1, sigma=100, decay=1.0
+
+# 1×1 branching matrix
+adjacency: [[0.0]]
+
+meta: {n_events: 500}
+```
+Unspecified `kwargs` fall back to the component defaults—e.g. a separable kernel defaults to `temporal_decay=1.0` and `spatial_sigma=10`
+
+```bash
+import yaml
+from hawkesnest.simulator.config import SimulatorConfig
+from hawkesnest.simulator.hawkes import HawkesSimulator
+
+cfg_yaml = yaml.safe_load(open("experiment.yml"))
+cfg       = SimulatorConfig.model_validate(cfg_yaml)
+
+# Build simulator from configuration (each block is therefor initialised and built)
+sim    = cfg.build()
+
+# Once simulator is built, generate data with .simulate() method
+events_df, parent = sim.simulate(n=cfg.meta.n_events, seed=42)
+events_df.to_csv("sine_sep.csv", index=False)
+```
+## Roadmap / Coming Soon  🚀
+
+- **More pre-baked datasets** – we’ll ship the remaining HawkesNest benchmark suites (heterogeneity, graph structure, topology, …).
+
+- **Richer dataset APIs** – every `*Dataset` class will get convenience helpers such as `.plot()`, `.summary()`, `.gif_kde()`, `.gif_intensity()`, etc.
+
+- **Extensibility guides** – step-by-step walkthroughs that show you how to:
+  - integrate **your own simulator** and expose it on the CLI,
+  - register custom building blocks (*kernels*, *backgrounds*, *domains*, …) so they work inside YAML configs,
+  - implement a **new metric** for an existing complexity pillar – or define an entirely new pillar.
