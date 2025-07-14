@@ -1,7 +1,7 @@
 <!-- ────────────────────────── Hero ─────────────────────────── -->
 <p align="center">
   <!-- replace with an actual logo asset if you have one -->
-  <img src="assets/logo.png" alt="logo" width="150"/>
+  <img src="assets/logo.png" alt="logo" width="250"/>
 </p>
 
 <h1 align="center">HawkesNest</h1>
@@ -92,7 +92,7 @@ network-constrained cascades.
 > The API may change without notice and some modules are still experimental.  
 > If you hit issues, please open an issue or PR—feedback is welcome!
 
-## Instalation
+### Instalation
 
 ```bash
 git clone https://github.com/your-org/hawkesnest.git
@@ -100,7 +100,7 @@ cd hawkesnest
 pip install -e .        # Python 3.9+
 ```
 
-## Generate out-the-box datasets
+### Generate out-the-box datasets
 To generate shipped synthetic spatio-temporal datasets. The hawkesnest console script provides a sub-command simulate-entanglement to generate pre-baked entanglement data at three complexity levels (`low`, `mid`, or `high`).
 ⚠️ **Development status:** Only entangelement is pre-baked now, future updates (soon), will include the rest of the pillars.
 
@@ -112,7 +112,7 @@ hawkesnest simulate-entanglement --level <low|mid|high> --n-events <N> --out <pa
  - `--n-events` is the number of events to simulate (default: `500`).
  - `--out` is the path to write the resulting CSV (default: `entanglement.csv`).
 
- # Example 
+ ### Example 
  ```bash
  hawkesnest simulate-entanglement --level mid --n-events 1000 --out ent_mid.csv
 ```
@@ -120,7 +120,7 @@ hawkesnest simulate-entanglement --level <low|mid|high> --n-events <N> --out <pa
 ## Direct simulation with flexibility
 Other than read-to-use datasets, the user can specify the building blocks for HawkesNest to simulate data with specific settings. 
 
-# YAML‑driven experiments (recommended for large sweeps)
+### YAML‑driven experiments (recommended for large sweeps)
 
 ```bash
 # Simulation space
