@@ -4,11 +4,12 @@ __pycache__/
 *$py.class
 
 # Virtual environments
+hn-test-env/
 .venv/
 venv/
 env/
 ENV/
-
+ent_mid.parquet
 # Editor directories and files
 .vscode/
 .idea/

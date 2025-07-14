@@ -88,12 +88,8 @@ class SimulatorConfig(BaseModel):
             for i, row in enumerate(self.kernels)
             for j, cfg in enumerate(row)
         }
-    
-        # ker = kernel_dict[1, 1]
-        # lamdas = lamdas + auto_lambda(ker)
-        print(f"[DEBUG] lambda_max before = {self.lambda_max}")
         self.lambda_max = 10 * max(lamdas)
-        print(f"[DEBUG] lambda_max after = {self.lambda_max}")
+        
         # adjacency
         M = len(bg_objs)
         adj = np.array(self.adjacency, dtype=float) if self.adjacency else np.eye(M)

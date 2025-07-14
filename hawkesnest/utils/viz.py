@@ -122,149 +122,6 @@ import matplotlib.pyplot as plt
 from scipy.stats import gaussian_kde
 from matplotlib import patheffects
 
-
-# def plot_kde_gif(
-#     df: pd.DataFrame,
-#     savepath: str,
-#     dataset_name: str,
-#     domain: list | None = None,
-#     name: str | None = None,
-#     n_frames: int = 60,
-#     fps: int = 2,
-#     cmap: str = "RdGy",
-#     grid_size: int = 100,
-#     dpi: int = 150,
-#     # mark overlay configuration:
-#     mark_strategy: str = "sample",  # one of ['all', 'sample', 'topk']
-#     mark_n: int = 20,                # number of marks to show when sampling or topk
-#     mark_lifetime_sec: float = 1.0
-# ):
-#     """
-#     Animate the KDE of (x,y) points over time, saving a GIF.
-
-#     You can overlay a subset of points (×) that reflect the density:
-#       - 'all': show all original events (default behavior)
-#       - 'sample': sample `mark_n` new points from the KDE (most probable locations)
-#       - 'topk': pick `mark_n` original events with highest density at their locations
-
-#     Marks appear for `mark_lifetime_sec` playback seconds, then fade.
-
-#     Parameters
-#     ----------
-#     df : pd.DataFrame
-#         Must contain columns ["t", "x", "y"].
-#     savepath : str
-#         Directory into which to save the GIF.
-#     dataset_name : str
-#         Used for naming the subfolder and file.
-#     domain : list [xmin, xmax, ymin, ymax], optional
-#         Bounding box for the grid; auto-computed if None.
-#     name : str, optional
-#         Override output filename (defaults to "{dataset_name}_evolution.gif").
-#     n_frames : int
-#         Number of time-slices / frames.
-#     fps : int
-#         Frames per second in the final GIF.
-#     cmap : str
-#         Matplotlib colormap for the filled contours.
-#     grid_size : int
-#         Number of grid points along each axis when evaluating the KDE.
-#     dpi : int
-#         Resolution for each frame PNG.
-#     mark_strategy : str
-#         Strategy for selecting overlay marks: 'all', 'sample', or 'topk'.
-#     mark_n : int
-#         Number of marks when sampling or topk.
-#     mark_lifetime_sec : float
-#         How many seconds of playback each mark stays visible.
-#     """
-#     # Prepare output paths
-#     if name is None:
-#         name = f"{dataset_name}_evolution.gif"
-#     out_dir = os.path.join(savepath, dataset_name)
-#     os.makedirs(out_dir, exist_ok=True)
-#     out_gif = os.path.join(out_dir, name)
-
-#     # Sort by time
-#     df_sorted = df.sort_values("t").reset_index(drop=True)
-#     xs = df_sorted["x"].to_numpy()
-#     ys = df_sorted["y"].to_numpy()
-#     ts = df_sorted["t"].to_numpy()
-
-#     # Domain
-#     if domain is None:
-#         xmin, xmax = xs.min(), xs.max()
-#         ymin, ymax = ys.min(), ys.max()
-#     else:
-#         xmin, xmax, ymin, ymax = domain
-
-#     # Time grid
-#     t_min, t_max = ts.min(), ts.max()
-#     times = np.linspace(t_min, t_max, n_frames)
-#     dt_sim = times[1] - times[0] if n_frames > 1 else (t_max - t_min)
-#     lifetime_sim = dt_sim * (mark_lifetime_sec * fps)
-
-#     # Precompute KDE evaluation grid
-#     X, Y = np.mgrid[xmin:xmax:grid_size*1j, ymin:ymax:grid_size*1j]
-#     positions = np.vstack([X.ravel(), Y.ravel()])
-
-#     frames = []
-#     for t_cut in times:
-#         past = df_sorted[df_sorted["t"] <= t_cut]
-#         pts = past[["x", "y"]].to_numpy()
-#         # KDE
-#         if pts.shape[0] > pts.shape[1]:
-#             kernel = gaussian_kde(pts.T)
-#             Z = kernel(positions).reshape(X.shape)
-#         else:
-#             Z = np.zeros_like(X)
-
-#         # Prepare figure
-#         fig, ax = plt.subplots(figsize=(6, 6), dpi=dpi)
-#         ax.contourf(X, Y, Z, levels=10, alpha=0.6, cmap=cmap)
-#         ax.set_xlim(xmin, xmax)
-#         ax.set_ylim(ymin, ymax)
-#         ax.axis("off")
-
-#         # Overlay marks selection window
-#         window_mask = (df_sorted["t"] <= t_cut) & (df_sorted["t"] > (t_cut - lifetime_sim))
-#         data_window = df_sorted[window_mask]
-
-#         if mark_strategy == 'all':
-#             mark_pts = data_window[['x','y']].to_numpy()
-#         elif mark_strategy == 'sample' and pts.shape[0] > pts.shape[1]:
-#             # sample new points from KDE
-#             sampled = kernel.resample(mark_n).T
-#             mark_pts = sampled
-#         elif mark_strategy == 'topk' and pts.shape[0] >= mark_n and pts.shape[0] > pts.shape[1]:
-#             # evaluate density at original past points
-#             dens = kernel(pts.T)
-#             idx = np.argsort(dens)[-mark_n:]
-#             mark_pts = pts[idx]
-#         else:
-#             mark_pts = np.empty((0,2))
-
-#         # Plot marks
-#         if mark_pts.size:
-#             ax.scatter(
-#                 mark_pts[:,0], mark_pts[:,1],
-#                 marker='x', s=50,
-#                 color='black', linewidths=1.5,
-#                 alpha=1.0
-#             )
-
-#         # Capture via in-memory PNG
-#         buf = io.BytesIO()
-#         fig.savefig(buf, format="png", bbox_inches="tight", pad_inches=0)
-#         plt.close(fig)
-#         buf.seek(0)
-#         img = imageio.v2.imread(buf)
-#         frames.append(img)
-
-#     # Save GIF
-#     imageio.mimsave(out_gif, frames, fps=fps)
-#     print(f"Saved animated KDE with '{mark_strategy}' marks to {out_gif}")
-
 def plot_kde_gif(
     df: pd.DataFrame,
     savepath: str,
@@ -400,8 +257,6 @@ if __name__ == "__main__":
     # choose bounds: if your simulation is in [0,1]², then:
     bounds = (x_min, x_max, y_min, y_max)
     
-
-
     plot_kde_gif(
         df,
         savepath=OUT_DIR,
@@ -410,6 +265,3 @@ if __name__ == "__main__":
         n_frames=60,
         fps=4
     )
-
-    #plot_kde(coords, dataset_name="ent",savepath="kde_plots", domain=bounds, name="poly-bg-kde")
-

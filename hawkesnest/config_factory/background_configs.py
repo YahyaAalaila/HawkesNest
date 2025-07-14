@@ -94,7 +94,6 @@ class FunctionBackgroundCfg(BaseModel):
             c_tx = self.c_tx or 1.0   # ← try 1.0, 2.0, 4.0 below
             c_tt = self.c_tt or 0.0
             c_xx = self.c_xx or 0.0
-            print(f"[DEBUG] poly2: base={base} c0={c0}, c_t={c_t}, c_x={c_x}, c_tx={c_tx}, c_tt={c_tt}, c_xx={c_xx}")
             kwargs.update(dict(base = base, a0=c0, a_t=c_t, a_x=c_x, a_tx=c_tx, a_tt=c_tt, a_xx=c_xx))
         elif self.name == "poly_entangled":
             # poly_entangled: a0, ent, quad, lin
@@ -102,7 +101,6 @@ class FunctionBackgroundCfg(BaseModel):
             ent = self.ent or 1.0
             quad = self.quad or 0.0
             lin = self.lin or 0.0
-            print(f"[DEBUG] poly_entangled: aa0={aa0}, ent={ent}, quad={quad}, lin={lin}")
             kwargs.update(dict(aa0=aa0, ent=ent, quad=quad, lin=lin))
         elif self.name == "cluster_mix":
             kwargs["centers"] = [tuple(c) for c in (self.centers or [])]

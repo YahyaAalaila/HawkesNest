@@ -26,7 +26,8 @@ dependencies = [
   "geopy>=2.2",
   "tqdm>=4.62",
   "matplotlib>=3.4",
-  "torch>=2.6.0"
+  "torch>=2.6.0",
+  "PyYAML>=6.0.2,<7"
 ]
 
 [project.optional-dependencies]
@@ -44,3 +45,11 @@ dev = [
 ]
 [project.scripts]
 hawkesnest = "hawkesnest.cli:cli"
+
+[tool.setuptools.packages.find]
+where   = ["."]
+include = ["hawkesnest*", "stargen*"]
+
+[tool.setuptools.package-data]
+# this means “include every .yml under hawkesnest/datasets/templates”
+"hawkesnest" = ["datasets/templates/*.yml"]
