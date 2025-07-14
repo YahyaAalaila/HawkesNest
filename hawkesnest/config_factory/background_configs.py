@@ -98,7 +98,7 @@ class FunctionBackgroundCfg(BaseModel):
             kwargs.update(dict(base = base, a0=c0, a_t=c_t, a_x=c_x, a_tx=c_tx, a_tt=c_tt, a_xx=c_xx))
         elif self.name == "poly_entangled":
             # poly_entangled: a0, ent, quad, lin
-            aa0 = self.aa0 or 1.0
+            aa0 = self.aa0 or .0
             ent = self.ent or 1.0
             quad = self.quad or 0.0
             lin = self.lin or 0.0

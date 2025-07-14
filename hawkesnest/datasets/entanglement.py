@@ -23,16 +23,15 @@ class EntanglementDataset(SpatioTemporalDataset):
         "mid": {
             # moderate cross-term in the background …
             "backgrounds": [
-                {"type":"function","name":"moving_gauss", "start":[[0.2,0.2],[0.5, 0.5], [0.3,0.3]],
-                 "v":[[2,1],[5,9],[4,4]],
+                {"type":"function","name":"moving_gauss", "start":[[2,2],[5, 5], [3,3]],
+                 "v":[[2,1],[0,0],[1,1]],
                  "sigma":70,"base":[1, 0.5, 0.5]}
             ]
         },
-        "high": {
+        "high": { "domain": {"type": "rectangle", "x_min": 0, "x_max": 10, "y_min": 0, "y_max": 10},
             "backgrounds": [
-                {
-         "type": "function", "name": "gabor_travel",
-         "a0": -2, "amp": 0.05, "fx": 0.2, "fy": 0, "ft": 0.2, "sigma": 0.5}
+                {"type": "function", "name": "gabor_travel",
+         "amp": 2.0, "fx": 0.5, "fy": 0.5, "ft": 0.01, "sigma": 0.25}
             ]
         },
     }
@@ -66,7 +65,6 @@ class EntanglementDataset(SpatioTemporalDataset):
             horizon=horizon,
             seed=seed,
         )
-
         super().__init__(
             sequences=self.seqs,
             scaler=scaler,
@@ -85,7 +83,7 @@ class EntanglementDataset(SpatioTemporalDataset):
         if which == "ent":
             # entanglement complexity: number of events
             comp = alpha_ent_kl(events, bw_joint=0.4, bw_space=0.5, bw_time=0.25)
-        # TODO: Add the rest metric
+        # TODO: Add the rest
         return comp
         
     @staticmethod
