@@ -16,7 +16,7 @@
 <!-- Badges -->
 <p align="center">
   <img src="https://img.shields.io/pypi/v/hawkesnest?color=blue" alt="PyPI"/>
-  <img src="https://img.shields.io/github/last-commit/YahyaAalaila/hawkesnest" alt="last commit"/>
+  <img src="https://img.shields.io/github/last-commit/YahyaAalaila/hawkesNest" alt="last commit"/>
   <img src="https://img.shields.io/github/license/your-org/hawkesnest" alt="license"/>
   <img src="https://img.shields.io/badge/python-3.9%2B-blue?logo=python"/>
 </p>
