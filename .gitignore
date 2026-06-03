@@ -1,49 +1,56 @@
-# Byte‐compiled / cache files
+# Python caches
 __pycache__/
 *.py[cod]
 *$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 
 # Virtual environments
-hn-test-env/
-.venv/
 venv/
+.venv/
 env/
 ENV/
-ent_mid.parquet
-# Editor directories and files
+hn-test-env/
+
+# Build/install artifacts
+dist/
+build/
+*.egg-info/
+
+# Notebook state
+.ipynb_checkpoints/
+
+# Generated HawkesNest outputs
+outputs/
+exports/
+data/generated/
+plots/generated/
+paper_artifacts/
+hawkesnest_suites*/
+hawkesnest_easy_hard*/
+z_complexity_sweep*/
+
+# Local submissions and external worktrees
+submission*/
+submission*.zip
+external/
+
+# Local/OS files
+.DS_Store
+Thumbs.db
 .vscode/
 .idea/
 *.sublime-workspace
 *.sublime-project
 
-# Distribution / packaging
-dist/
-build/
-*.egg-info/
-
-# Jupyter notebooks checkpoints
-.ipynb_checkpoints/
-
-# pytest cache
-.pytest_cache/
-
-# Coverage reports
-htmlcov/
-.coverage
-coverage.xml
-
-# OS files
-.DS_Store
-Thumbs.db
-
+# Existing local experiment outputs
 results/
 quick_results/
 kde_plots/
 fig72style/
 Experiments/
-data/
 csr_cache/
-
+ent_mid.parquet
 fig_*
 topology_metric_vs_nodes.png
-.mypy_cache/

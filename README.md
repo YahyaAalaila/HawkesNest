@@ -1,181 +1,225 @@
-<!-- ────────────────────────── Hero ─────────────────────────── -->
-<p align="center">
-  <!-- replace with an actual logo asset if you have one -->
-  <img src="assets/logo.png" alt="logo" width="100"/>
-</p>
+# HawkesNest
 
-<h1 align="center">HawkesNest</h1>
+HawkesNest is a synthetic spatio-temporal point-process corpus generator for controlled Hawkes-process experiments. It is intended for model stress tests where the data-generating process is known, reproducible, and configurable.
 
-<p align="center">
-  <b>Composable generators &amp; metrics for <i>synthetic</i> spatio-temporal
-     point-process data.</b><br/>
-  Stress-test your next STPP model on data whose ground-truth complexity is
-  known in advance.
-</p>
+The public launch surface is intentionally small. The stable supported suites are:
 
-<!-- Badges -->
-<p align="center">
-  <img src="https://img.shields.io/pypi/v/hawkesnest?color=blue" alt="PyPI"/>
-  <img src="https://img.shields.io/github/last-commit/YahyaAalaila/HawkesNest" alt="last commit"/>
-  <img src="https://img.shields.io/github/license/YahyaAalaila/HawkesNest" alt="license"/>
-  <img src="https://img.shields.io/badge/python-3.9%2B-blue?logo=python"/>
-</p>
+- `EntanglementSuite`: suite3, a space-time entanglement ladder with levels `L0` through `L3`.
+- `HeterogeneitySuite`: suite4, a background heterogeneity ladder with levels `H0` through `H3`.
 
----
+These suites preserve the working paper-generation path while exposing it through package APIs and CLI commands.
 
-<!-- Pillar GIF overview -->
-<table align="center">
-  <tr>
-    <td align="center">
-      <img src="assets/gifs/ent_evolution_evolution.gif" width="250"/>
-      <br/>
-      <strong>Spatial–temporal<br/>heterogeneity&nbsp;(α<sub>het</sub>)</strong>
-    </td>
-    <td align="center">
-      <img src="assets/gifs/hetero_evolution_evolution.gif" width="250"/>
-      <br/>
-      <strong>Space–time<br/>entanglement&nbsp;(α<sub>ent</sub>)</strong>
-    </td>
-    <td align="center">
-      <img src="assets/gifs/topo_evolution_evolution.gif" width="250"/>
-      <br/>
-      <strong>Network topology<br/>distortion&nbsp;(α<sub>topo</sub>)</strong>
-    </td>
-  </tr>
-</table>
+## Relation To Seahorse
 
+Seahorse uses synthetic corpora generated from HawkesNest. HawkesNest should be cited when Seahorse experiments depend on these synthetic suite3 or suite4 corpora.
 
----
-## Why HawkesNest ?
+The public API keeps the same simulator stack used by the accepted paper-generation scripts:
 
-Benchmarks for spatio-temporal point-process (STPP) models often rely on a
-single opaque real-world dataset.  
-That makes it impossible to know whether a model succeeds because it truly
-captures the governing dynamics or because it latches onto idiosyncratic noise.
+```text
+suite -> SimulatorConfig -> HawkesSimulator -> thinning
+```
 
-**HawkesNest flips the script**: we generate event streams from configurable
-Hawkes processes whose *latent* patterns are precisely controlled along four
-orthogonal *complexity pillars*:
+The suite wrappers orchestrate configurations. They do not replace the Hawkes simulator or introduce an ad hoc generator.
 
-| Pillar | What changes | Typical knob |
-| ------ | ------------ | ------------ |
-| **Heterogeneity** | non-uniform background rate | spatial clusters, travelling Gaussian |
-| **Entanglement**  | space–time coupling | cross-term polynomials, travelling waves |
-| **Topology**      | non-Euclidean support | random-geometric graphs, street grids |
-| **Interaction Graph** | cross-type triggers | dense vs. sparse adjacency |
+## Installation
 
-Researchers can therefore dial complexity up or down and observe how a new
-method copes — from “easy” homogeneous Poisson streams to highly entangled,
-network-constrained cascades.
-
----
-
-## Key Features
-
-* **Lego-style generator** – mix-and-match *domain*, *background*, *kernel* &
-  *interaction graph* in a few YAML lines.
-* **Ogata thinning simulator** – with both Euclidean and geodesic distances.
-* **Complexity meters** – heterogeneity $\alpha_{\text{het}}$, entanglement
-  $\alpha_{\text{ent}}$, topology $\alpha_{\text{topo}}$, graph density
-  $\alpha_{\text{graph}}$.
-* **Preset data classes** – one-liners that instantiate high-complexity samples
-  for each pillar.
-* **Extensible** – register new background surfaces, kernels, even
-  non-Hawkes DGPs or alternative thinning routines.
-* **CLI** – `hawkesnest simulate …` makes dataset creation reproducible.
-
----
-
-## Get started  <!-- still under active development -->
-
-> ⚠️ **Development status:** HawkesNest is a work-in-progress.  
-> The API may change without notice and some modules are still experimental.  
-> If you hit issues, please open an issue or PR—feedback is welcome!
-
-### Instalation
+From a local checkout:
 
 ```bash
-git clone https://github.com/your-org/hawkesnest.git
-cd hawkesnest
-pip install -e .        # Python 3.9+
+pip install -e .
 ```
 
-### Generate out-the-box datasets
-To generate shipped synthetic spatio-temporal datasets. The hawkesnest console script provides a sub-command simulate-entanglement to generate pre-baked entanglement data at three complexity levels (`low`, `mid`, or `high`).
-⚠️ **Development status:** Only entangelement is pre-baked now, future updates (soon), will include the rest of the pillars.
+For development and tests:
 
 ```bash
-hawkesnest simulate-entanglement --level <low|mid|high> --n-events <N> --out <path.csv>
+pip install -e ".[dev]"
 ```
 
- - `--level` selects complexity: `low`, `mid`, or `high`.
- - `--n-events` is the number of events to simulate (default: `500`).
- - `--out` is the path to write the resulting CSV (default: `entanglement.csv`).
+## Python Quickstart
 
- ### Example 
- ```bash
- hawkesnest simulate-entanglement --level mid --n-events 1000 --out ent_mid.csv
+```python
+from hawkesnest.suites import EntanglementSuite, HeterogeneitySuite
+
+ent = EntanglementSuite().generate(level="L2", n_events=50, seed=123)
+print(ent.events.head())
+print(ent.metadata["simulator_class"])
+
+het = HeterogeneitySuite().generate(
+    level="H3",
+    n_events=50,
+    seed=123,
+    out_dir="outputs/heterogeneity_demo",
+)
+print(het.export_paths)
 ```
 
-## Direct simulation with flexibility
-Other than read-to-use datasets, the user can specify the building blocks for HawkesNest to simulate data with specific settings. 
+`generate()` returns a `GenerationResult` with:
 
-### YAML‑driven experiments (recommended for large sweeps)
+- `events`: a pandas DataFrame.
+- `config`: the suite-level simulator configuration.
+- `metadata`: suite name, level, seed, requested event count, actual event count, and simulator class.
+- `simulator_class_name`: expected to be `hawkesnest.simulator.hawkes.HawkesSimulator`.
+- `export_paths`: paths written when `out_dir` is provided.
+
+## CLI Quickstart
+
+Generate one entanglement sequence:
 
 ```bash
-# Simulation space
-domain:
-  type: rectangle
-  x_min: 0
-  x_max: 1000
-  y_min: 0
-  y_max: 1000
-
-lambda_max: 20            # safety bound (> maximum row‑sum of branching)
-
-# Background intensity (one entry per mark)
-backgrounds:
-  - {type: function, name: sine, amp: 1.0, freq: 0.5}
-
-# Triggering kernel (same kernel reused for all i→j pairs)
-kernels:
-  - [{type: separable}]   # uses default branching_ratio=1, sigma=100, decay=1.0
-
-# 1×1 branching matrix
-adjacency: [[0.0]]
-
-meta: {n_events: 500}
+python -m hawkesnest.cli generate entanglement \
+  --level L2 \
+  --n-events 50 \
+  --seed 123 \
+  --out outputs/entanglement_demo
 ```
-Unspecified `kwargs` fall back to the component defaults—e.g. a separable kernel defaults to `temporal_decay=1.0` and `spatial_sigma=10`
+
+Generate one heterogeneity sequence:
 
 ```bash
-import yaml
-from hawkesnest.simulator.config import SimulatorConfig
-from hawkesnest.simulator.hawkes import HawkesSimulator
-
-cfg_yaml = yaml.safe_load(open("experiment.yml"))
-cfg       = SimulatorConfig.model_validate(cfg_yaml)
-
-# Build simulator from configuration (each block is therefor initialised and built)
-sim    = cfg.build()
-
-# Once simulator is built, generate data with .simulate() method
-events_df, parent = sim.simulate(n=cfg.meta.n_events, seed=42)
-events_df.to_csv("sine_sep.csv", index=False)
+python -m hawkesnest.cli generate heterogeneity \
+  --level H3 \
+  --n-events 50 \
+  --seed 123 \
+  --out outputs/heterogeneity_demo
 ```
-## Roadmap / Coming Soon  🚀
 
-- **More pre-baked datasets** – we’ll ship the remaining HawkesNest benchmark suites (heterogeneity, graph structure, topology, …).
+Generate a small corpus:
 
-- **Richer dataset APIs** – every `*Dataset` class will get convenience helpers such as `.plot()`, `.summary()`, `.gif_kde()`, `.gif_intensity()`, etc.
+```bash
+python -m hawkesnest.cli generate-corpus entanglement \
+  --levels L0 L1 L2 L3 \
+  --seeds 0 1 \
+  --n-events 50 \
+  --out outputs/entanglement_corpus
+```
 
-- **Extensibility guides** – step-by-step walkthroughs that show you how to:
-  - integrate **your own simulator** and expose it on the CLI,
-  - register custom building blocks (*kernels*, *backgrounds*, *domains*, …) so they work inside YAML configs,
-  - implement a **new metric** for an existing complexity pillar – or define an entirely new pillar.
+Visualize an exported sequence:
 
-## License
+```bash
+python -m hawkesnest.cli visualize \
+  outputs/entanglement_demo/events.jsonl \
+  --kind space-time \
+  --out outputs/entanglement_demo/space_time.png
+```
 
-HawkesNest is licensed under the **Apache License 2.0**.  
-See the [LICENSE](./LICENSE) file for full text and the NOTICE file for third-party attributions.
+## Stable Suites
 
+### EntanglementSuite
+
+`EntanglementSuite` exposes the suite3 entanglement ladder:
+
+```python
+from hawkesnest.suites import EntanglementSuite
+
+suite = EntanglementSuite()
+for level in suite.levels():
+    result = suite.generate(level=level, n_events=25, seed=0)
+    print(level, result.events.shape)
+```
+
+Supported levels: `L0`, `L1`, `L2`, `L3`.
+
+### HeterogeneitySuite
+
+`HeterogeneitySuite` exposes the suite4 heterogeneity ladder:
+
+```python
+from hawkesnest.suites import HeterogeneitySuite
+
+suite = HeterogeneitySuite()
+for level in suite.levels():
+    result = suite.generate(level=level, n_events=25, seed=0)
+    print(level, result.events.shape)
+```
+
+Supported levels: `H0`, `H1`, `H2`, `H3`.
+
+## Output Schema
+
+CSV exports use one row per event:
+
+```text
+t,x,y,m,is_triggered
+```
+
+- `t`: event time.
+- `x`, `y`: spatial coordinates.
+- `m`: mark label.
+- `is_triggered`: whether the accepted event had nonzero triggering intensity.
+
+JSONL exports currently store one sequence per line:
+
+```json
+{"times": [0.1, 0.3], "locations": [[0.2, 0.4], [0.8, 0.1]]}
+```
+
+Metadata exports include suite, level, seed, event counts, tau window, simulator class, configuration, and export paths.
+
+## Visualization
+
+Use the package visualizer on an exported JSONL file:
+
+```bash
+python -m hawkesnest.cli visualize \
+  outputs/entanglement_demo/events.jsonl \
+  --kind space-time \
+  --out outputs/entanglement_demo/plot.png
+```
+
+The lightweight notebooks in `notebooks/` show equivalent Python usage.
+
+## Experimental And Legacy Areas
+
+The repository still contains older and experimental code paths. They are not the stable public launch surface yet:
+
+- Branching and cross-event graph logic.
+- Topology and non-Euclidean domain experiments.
+- Legacy dataset/template loaders under `hawkesnest/datasets/templates`.
+- Older scripts used for exploratory sweeps and paper artifact generation.
+
+These are preserved for now, but users should treat `EntanglementSuite` and `HeterogeneitySuite` as the supported public entry points.
+
+## Reproducibility
+
+The stable suites are deterministic for a fixed level, event count, seed, and installed dependency set. The public suite wrappers call the HawkesNest DGP path:
+
+```text
+EntanglementSuite / HeterogeneitySuite
+-> hawkesnest.config.SimulatorConfig
+-> SimulatorConfig.build()
+-> hawkesnest.simulator.hawkes.HawkesSimulator
+-> hawkesnest.utils.thinning.thinning
+```
+
+This path preserves the working suite3 and suite4 paper-generation behavior while making it available through a public API and CLI.
+
+## Examples
+
+Small runnable examples are available in `examples/`:
+
+```bash
+python examples/generate_entanglement.py
+python examples/generate_heterogeneity.py
+```
+
+Both write tiny outputs under `outputs/`, which is ignored by Git.
+
+## Citation
+
+Citation information will be added before archival release.
+
+```bibtex
+@software{hawkesnest,
+  title = {HawkesNest: Synthetic Hawkes-Process Corpora for Spatio-Temporal Point-Process Evaluation},
+  author = {TBD},
+  year = {2026},
+  note = {Citation details forthcoming}
+}
+```
+
+## Roadmap And Limitations
+
+- Keep suite3 entanglement and suite4 heterogeneity stable and reproducible.
+- Add public documentation and Colab-ready examples around the supported suites.
+- Recover branching and topology only after their working paths are verified.
+- Do not treat legacy scripts, generated corpora, sweep outputs, or paper artifacts as part of the public API.
