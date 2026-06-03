@@ -1,7 +1,7 @@
 """kernel function components.
 
-A *kernel* represents the self-exciting interaction `α(s, t | s', t')` of a
-spatio-temporal point process.  It is evaluated independently of any
+A *kernel* represents the self-exciting interaction `alpha(s, t | s', t')` of a
+spatio-temporal point process. It is evaluated independently of any
 background intensity components.
 """
 
@@ -14,13 +14,6 @@ from hawkesnest.kernel.rough import MixtureKernel  # noqa: F401
 from hawkesnest.kernel.rough import RoughKernel  # noqa: F401
 from hawkesnest.kernel.network import NetworkKernel  # noqa: F401
 from hawkesnest.kernel.geo import ExponentialGeodesicKernel  # noqa: F401
+from hawkesnest.kernel.wave import TravelingWaveKernel  # noqa: F401
 
-__all__ = [
-    "SpaceTimeKernel",
-    "KernelBase",
-    "ExponentialGaussianKernel",
-    "MixtureKernel",
-    "NetworkKernel",
-    "RoughKernel",
-    "ExponentialGeodesicKernel",
-]
+__all__ = ["SpaceTimeKernel", "KernelBase", "ExponentialGaussianKernel", "MixtureKernel", "NetworkKernel", "RoughKernel", "ExponentialGeodesicKernel", "TravelingWaveKernel"]

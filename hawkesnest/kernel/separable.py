@@ -1,35 +1,27 @@
-"""
-Separable exponential-Gaussian kernel implementation.
-phi(s, tau) = eta * g(tau) * h(||s||)
-"""
+"""Separable spatio-temporal kernels."""
+
 from __future__ import annotations
 
 import numpy as np
+
 from hawkesnest.kernel.base import KernelBase
 
+
 class ExponentialGaussianKernel(KernelBase):
-    def __init__(
-        self,
-        temporal_scale: float,
-        spatial_scale: float
-    ) -> None:
-        """
-        branching_ratio: total mass eta
-        temporal_scale: decay parameter for exponential in time
-        spatial_scale: bandwidth for Gaussian in space
-        """
-        self.t_scale = temporal_scale
+    """Product kernel with exponential time decay and Gaussian spatial decay."""
+
+    def __init__(self, spatial_scale: float = 1.0, temporal_scale: float = 1.0, branching_ratio: float = 1.0):
         self.s_scale = spatial_scale
-    
-    def __call__(self, s: np.ndarray, tau: np.ndarray) -> np.ndarray:
-        # assume s = Euclidean distance array
-        
-        g = np.exp(-tau / self.t_scale)
-        h = np.exp(-0.5 * (s / self.s_scale)**2)
-        return (g * h)
+        self.t_scale = temporal_scale
+        self.branching_ratio = branching_ratio
+
+    def __call__(self, s: np.ndarray | float, tau: np.ndarray | float) -> np.ndarray:
+        g = np.exp(-np.asarray(tau) / self.t_scale)
+        h = np.exp(-0.5 * (np.asarray(s) / self.s_scale) ** 2)
+        return g * h
+
+    def max_value(self) -> float:
+        return 1.0
 
     def integrate(self) -> float:
-        # For separable: eta * (integral g dt) * (integral h ds) normalized
-        # Here we assume g and h normalized so integrate=eta
-        # TODO: check if this is correct for separable kernels
-        return 1
+        return 1.0
