@@ -61,3 +61,97 @@ def alpha_topo(domain: SpatialDomain,
 
     alpha = (D - 1.0) / (D_max - 1.0)
     return float(np.clip(alpha, 0.0, 1.0))
+
+
+
+def alpha_topo_new(domain: SpatialDomain) -> float:
+    """
+    Deterministic topology index based on average metric distortion
+    of the underlying graph vs. Euclidean geometry.
+
+    Assumptions
+    -----------
+    - `domain` has an attribute `graph` which is a networkx Graph.
+    - Each node in `graph` has a 2D position stored in node attribute "pos".
+    - Edge weights (if present) represent geodesic length along the network.
+      If not present, shortest paths are computed with unweighted edges
+      and you should pre-weight edges externally.
+
+    Returns
+    -------
+    alpha : float
+        Topology complexity in [0, 1). 0 for flat Euclidean-like domains,
+        increasing towards 1 as paths are more distorted.
+    """
+    # If the domain has no graph (pure Euclidean rectangle), complexity is 0
+    if hasattr(domain, "graph"):
+        G = domain.graph
+    elif hasattr(domain, "G"):
+        G = domain.G
+    else:
+        # No graph → flat Euclidean domain, complexity 0
+        return 0.0
+    if G.number_of_nodes() < 2:
+        return 0.0
+
+    # Extract positions
+    pos = nx.get_node_attributes(G, "pos")
+    if len(pos) != G.number_of_nodes():
+        raise ValueError("All graph nodes must have a 'pos' attribute for alpha_topo.")
+
+    nodes = list(G.nodes())
+    n = len(nodes)
+
+    # All-pairs shortest paths (deterministic)
+    # Uses edge attribute 'weight' if present, else unweighted
+    lengths = dict(nx.all_pairs_dijkstra_path_length(G, weight="weight"))
+
+    total_geo = 0.0
+    total_euc = 0.0
+    count = 0
+
+    for i in range(n):
+        u = nodes[i]
+        xu = np.asarray(pos[u], dtype=float)
+
+        # distances from u to all v
+        dist_u = lengths[u]
+
+        for j in range(i + 1, n):
+            v = nodes[j]
+            xv = np.asarray(pos[v], dtype=float)
+
+            # Euclidean distance
+            d_e = float(np.linalg.norm(xu - xv))
+            if d_e == 0.0:
+                # Same position; skip, no information
+                continue
+
+            # Geodesic distance; if disconnected, skip
+            d_g = dist_u.get(v, None)
+            if d_g is None or np.isinf(d_g):
+                continue
+
+            total_euc += d_e
+            total_geo += float(d_g)
+            count += 1
+
+    if count == 0:
+        # Graph is effectively disconnected for our purposes
+        # Topology is "maximally bad"; if you prefer, you can raise instead.
+        return 1.0
+
+    mean_euc = total_euc / count
+    mean_geo = total_geo / count
+
+    # Distortion ratio; enforce R >= 1 numerically
+    if mean_euc == 0.0:
+        R = 1.0
+    else:
+        R = max(1.0, mean_geo / mean_euc)
+
+    # Map R in [1, +inf) to alpha in [0,1)
+    alpha = 1.0 - 1.0 / R
+
+    # Numerical clipping for safety
+    return float(np.clip(alpha, 0.0, 1.0))

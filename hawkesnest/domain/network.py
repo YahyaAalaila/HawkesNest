@@ -1,6 +1,7 @@
 # hawkesnest/domain/network.py
 from __future__ import annotations
 import random, math
+import time
 from typing import Tuple
 
 import networkx as nx
@@ -31,6 +32,19 @@ class NetworkDomain(SpatialDomain):
 
         self.G = G
         self._edges, self._edge_cum = self._precompute_edge_table(G)
+        self._node_list = list(G.nodes())
+        self._node_index = {n: i for i, n in enumerate(self._node_list)}
+        self._coords = np.asarray([[G.nodes[n]["x"], G.nodes[n]["y"]] for n in self._node_list], dtype=float)
+        n = len(self._node_list)
+        self._apsp = np.full((n, n), np.inf, dtype=float)
+        for src, lengths in nx.all_pairs_dijkstra_path_length(G, weight="length"):
+            i = self._node_index[src]
+            for dst, dist in lengths.items():
+                j = self._node_index[dst]
+                self._apsp[i, j] = float(dist)
+        np.fill_diagonal(self._apsp, 0.0)
+        if np.isinf(self._apsp).any():
+            raise ValueError("Graph not fully connected: APSP contains inf")
 
     # ------------------------------------------------------------------ API
     def sample_point(self, rng: random.Random | np.random.Generator) -> Tuple[float, float]:
@@ -38,6 +52,15 @@ class NetworkDomain(SpatialDomain):
         Uniform on total edge length:
         1) pick an edge proportional to its 'length',
         2) pick a random fraction along that edge.
+        """
+        pt, _ = self.sample_edgepoint(rng)
+        return pt
+
+    def sample_edgepoint(self, rng: random.Random | np.random.Generator) -> Tuple[Tuple[float, float], dict]:
+        """
+        Like sample_point, but also returns metadata for fast geodesic distances:
+        meta = {"u": int, "v": int, "alpha": float, "edge_len": float}
+        point coordinate is interpolated between u and v by alpha.
         """
         if isinstance(rng, random.Random):
             r = rng.random() * self._edge_cum[-1]
@@ -53,24 +76,49 @@ class NetworkDomain(SpatialDomain):
         vx, vy = self.G.nodes[v]["x"], self.G.nodes[v]["y"]
         x = ux + alpha * (vx - ux)
         y = uy + alpha * (vy - uy)
-        return (x, y)
+        meta = {"u": u, "v": v, "alpha": float(alpha), "edge_len": float(length)}
+        return (x, y), meta
 
     def distance(self, u: Tuple[float, float], v: Tuple[float, float]) -> float:
         """
         Project arbitrary points back to the nearest node (fast & simple).
         For large graphs you may want a KD-tree lookup.
         """
-        nu = self._nearest_node(*u)
-        nv = self._nearest_node(*v)
-        # Dijkstra on length attribute
-        return nx.shortest_path_length(self.G, nu, nv, weight="length")
+        coords = self._coords
+        u_arr = np.asarray(u, dtype=float)
+        v_arr = np.asarray(v, dtype=float)
+        iu = int(np.argmin(np.sum((coords - u_arr) ** 2, axis=1)))
+        iv = int(np.argmin(np.sum((coords - v_arr) ** 2, axis=1)))
+        return float(self._apsp[iu, iv])
+
+    def distance_edgepoints(self, a: dict, b: dict) -> float:
+        """
+        O(1) geodesic distance between two edgepoints using APSP.
+        """
+        u_a, v_a = a["u"], a["v"]
+        u_b, v_b = b["u"], b["v"]
+        alpha_a, alpha_b = float(a["alpha"]), float(b["alpha"])
+        len_a, len_b = float(a["edge_len"]), float(b["edge_len"])
+
+        da_u = alpha_a * len_a
+        da_v = (1.0 - alpha_a) * len_a
+        db_u = alpha_b * len_b
+        db_v = (1.0 - alpha_b) * len_b
+
+        iu = self._node_index[u_a]
+        iv = self._node_index[v_a]
+        ju = self._node_index[u_b]
+        jv = self._node_index[v_b]
+
+        cand = [
+            da_u + self._apsp[iu, ju] + db_u,
+            da_u + self._apsp[iu, jv] + db_v,
+            da_v + self._apsp[iv, ju] + db_u,
+            da_v + self._apsp[iv, jv] + db_v,
+        ]
+        return float(min(cand))
 
     # ---------------------------------------------------------------- internals
-    def _nearest_node(self, x: float, y: float) -> int:
-        G = self.G
-        # brute force   (ok for <10⁴ nodes; otherwise KD-tree this)
-        return min(G.nodes, key=lambda n: (G.nodes[n]["x"] - x) ** 2 + (G.nodes[n]["y"] - y) ** 2)
-
     @staticmethod
     def _precompute_edge_table(G: nx.Graph):
         edgelist: list[tuple[int, int, float]] = []

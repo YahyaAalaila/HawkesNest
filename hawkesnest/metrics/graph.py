@@ -1,17 +1,4 @@
-# hawkesnest/metrics/graph.py
-"""
-Multi-event-type relation complexity metric: combines the spectral norm of the
-branching matrix A with the network modularity of its symmetrized graph.
 
-Index:
-    alpha_graph = (||A||_2 / norm_max) * sqrt(Q / Q_max)
-
-Where:
-- ||A||_2 is the spectral norm (largest singular value) of A.
-- Q is Newman modularity on the undirected version of A.
-- norm_max < 1 is the max spectral norm under stability (default 0.95).
-- Q_max is the theoretical or empirically observed maximum modularity (default 1.0).
-"""
 import networkx as nx
 import numpy as np
 
@@ -24,49 +11,90 @@ except ImportError:
 
 def spectral_norm(A: np.ndarray) -> float:
     """Return the spectral norm (largest singular value) of matrix A."""
-    # Compute singular values
     s = np.linalg.svd(A, compute_uv=False)
     return float(s[0])
 
 
-def modularity(A: np.ndarray) -> float:
-    """Compute Newman modularity of the weighted undirected graph sym(A)."""
-    # Symmetrize A
-    B = (A + A.T) / 2
+def _graph_and_strengths(A: np.ndarray):
+    """
+    Build symmetrised weighted graph from A and return:
+    - G: networkx.Graph
+    - strengths: np.ndarray of node strengths (sum of incident weights)
+    """
+    # Symmetrise A -> undirected weighted adjacency
+    B = (A + A.T) / 2.0
     G = nx.from_numpy_array(B)
+
+    # Node strength = sum of weights of incident edges
+    strengths = np.asarray(B.sum(axis=1), dtype=float).reshape(-1)
+    return G, strengths
+
+
+def modularity_with_Qmax(A: np.ndarray) -> tuple[float, float]:
+    """
+    Compute Newman modularity Q and its theoretical upper bound Q_max
+    for the symmetrised branching graph.
+
+    Q_max = 1 - sum_m p_m^2,
+    where p_m is the fraction of total strength at node m.
+    """
     if community_louvain is None:
         raise ImportError("Please install python-louvain to compute modularity.")
-    # Compute best partition
+
+    G, strengths = _graph_and_strengths(A)
+
+    # Total incident weight
+    total_strength = float(strengths.sum())
+    if total_strength <= 0.0:
+        # Graph has no weight; treat as no structure
+        return 0.0, 1.0
+
+    # Node-strength distribution
+    p = strengths / total_strength
+
+    # Theoretical maximum modularity for a perfectly assortative block structure
+    Q_max = 1.0 - float(np.sum(p ** 2))
+
+    # If all mass is on one node (degenerate), Q_max ~ 0: no modular structure
+    if Q_max <= 0.0:
+        return 0.0, 1e-8  # avoid division by zero downstream
+
+    # Louvain partition and empirical modularity
     partition = community_louvain.best_partition(G, weight="weight")
-    # Compute modularity
     Q = community_louvain.modularity(partition, G, weight="weight")
-    return float(Q)
+
+    return float(Q), float(Q_max)
 
 
-def alpha_graph(A: np.ndarray, norm_max: float = 0.95, Q_max: float = 1.0) -> float:
+def alpha_graph_new(A: np.ndarray, norm_max: float = 0.95) -> float:
     """
     Compute the multi-type relation complexity index in [0,1].
 
     Parameters
     ----------
-    A: np.ndarray
+    A : np.ndarray
         MxM branching matrix of expected offspring means.
-    norm_max: float
+    norm_max : float
         Maximum allowed spectral norm under stability (default 0.95).
-    Q_max: float
-        Maximum modularity for normalization (default 1.0).
 
     Returns
     -------
-    alpha: float
+    alpha : float
         Complexity index combining spectral norm and modularity.
     """
-    # Spectral norm component
+    # Spectral norm component (clipped at 1)
     norm_val = spectral_norm(A) / norm_max
-    # Modularity component
-    Q_val = modularity(A) / Q_max
-    # Combine with square-root scaling on modularity
-    alpha = norm_val * np.sqrt(Q_val)
-    # Clip to [0,1]
-    return float(np.clip(alpha, 0.0, 1.0))
+    norm_val = float(np.clip(norm_val, 0.0, 1.0))
 
+    # Modularity component with theoretical Q_max
+    Q, Q_max = modularity_with_Qmax(A)
+
+    # Clamp negative Q to 0 before normalisation
+    Q_pos = max(Q, 0.0)
+    Q_ratio = Q_pos / Q_max if Q_max > 0.0 else 0.0
+    Q_ratio = float(np.clip(Q_ratio, 0.0, 1.0))
+
+    # Combine with square-root scaling on modularity
+    alpha = norm_val * np.sqrt(Q_ratio)
+
+    return float(np.clip(alpha, 0.0, 1.0)) # clamp to [0,1] to make sure, despite theoretically in [0,1]

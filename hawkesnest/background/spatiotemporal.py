@@ -2,8 +2,10 @@ from typing import Callable
 import numpy as np
 
 from hawkesnest.background.base import BackgroundBase
+from hawkesnest.background.hetero_ladder import HeteroLadderBackground
 from hawkesnest.background.spatial import SpatialBackground
 from hawkesnest.background.temporal import TemporalProfile
+from hawkesnest.domain.standard import RectangleDomain
 
 
 class SeparableBackground(BackgroundBase):
@@ -29,7 +31,18 @@ class EntangledBackground(BackgroundBase):
     ) -> None:  # noqa: E501
         self.surface = spline_surface
 
-    def __call__(
-        self, s: np.ndarray, t: float, m: int | None = None
-    ) -> float:  # noqa: D401,E501
-        return float(self.surface(s, t))
+    def __call__(self, s: np.ndarray, t: float, m: int | None = None) -> float:
+        val = float(self.surface(s, t))
+        if val < 0.0:
+            raise ValueError(
+                f"Background intensity must be non-negative, got {val} at s={s}, t={t}"
+            )
+        return val
+    
+
+
+__all__ = [
+    "SeparableBackground",
+    "EntangledBackground",
+    "HeteroLadderBackground",
+]

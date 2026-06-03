@@ -54,3 +54,13 @@ csr_cache/
 ent_mid.parquet
 fig_*
 topology_metric_vs_nodes.png
+
+# Experimental / generated artifacts — not part of the release
+00_LEtstry/
+cache/
+exp3_gifs/
+out/
+plots/
+validate_events.csv
+hawkesnest/kernel.zip
+paper_appendix_A.tex

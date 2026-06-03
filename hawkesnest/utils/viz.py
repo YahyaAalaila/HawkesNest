@@ -10,7 +10,6 @@ import pandas as pd
 import imageio
 
 
-# remove any normalization logic
 def plot_kde(
     coords: np.ndarray,
     savepath: str,
@@ -114,13 +113,7 @@ def plot_figure_7_2_style(h_vals, t_vals, L_diff, savepath, costum_name):
     
     
 
-import os
-import numpy as np
-import pandas as pd
-import imageio
-import matplotlib.pyplot as plt
-from scipy.stats import gaussian_kde
-from matplotlib import patheffects
+
 
 def plot_kde_gif(
     df: pd.DataFrame,
@@ -241,27 +234,3 @@ def plot_kde_gif(
     imageio.mimsave(out_gif, frames, fps=fps)
     print(f"Saved animated KDE with '{mark_strategy}' marks to {out_gif}")
 
-
-if __name__ == "__main__":
-    import pandas as pd
-    OUT_DIR = Path("quick_results")
-    OUT_DIR.mkdir(exist_ok=True)
-    CSV_OUT  = OUT_DIR / "events_ent_cluster_KDE.csv"
-    
-    
-    # assume events_df has columns ["x","y","t", ...] 
-    df = pd.read_csv("quick_results/data/events_topology_sine + separable 4_df.csv")  # or however you loaded it
-    coords = df[["x","y"]].to_numpy()
-    x_min, x_max = coords[:,0].min(), coords[:,0].max()
-    y_min, y_max = coords[:,1].min(), coords[:,1].max()
-    # choose bounds: if your simulation is in [0,1]², then:
-    bounds = (x_min, x_max, y_min, y_max)
-    
-    plot_kde_gif(
-        df,
-        savepath=OUT_DIR,
-        dataset_name="topo_evolution",
-        domain=bounds,
-        n_frames=60,
-        fps=4
-    )

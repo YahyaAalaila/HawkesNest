@@ -1,4 +1,3 @@
-# hawkesnest/background/temporal.py
 """
 TemporalProfile implementations for background intensity.
 

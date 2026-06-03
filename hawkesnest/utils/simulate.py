@@ -15,15 +15,10 @@ _TEMPLATE_DIR = (
           .parent                     # …/hawkesnest/utils
           / "../datasets/templates"   # → …/hawkesnest/datasets/templates
 ).resolve()
-def _load_yaml(name: str) -> str:
-    path = _TEMPLATE_DIR / f"{name}.yml"
-    if not path.exists():
-        raise FileNotFoundError(f"Unknown pillar template “{name}.yml”")
-    return path.read_text()
-
 TEMPLATES: dict[str, str] = {
-    pillar: _load_yaml(pillar)
-    for pillar in ("entanglement", "heterogeneity", "topology")
+    p.stem: p.read_text()
+    for p in _TEMPLATE_DIR.glob("*.yml")
+    if p.is_file()
 }
 
 def _resolve_sim_args(

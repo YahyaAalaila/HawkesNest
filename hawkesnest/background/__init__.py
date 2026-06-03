@@ -1,10 +1,3 @@
-"""Background intensity components.
-
-A *background* represents the exogenous or baseline arrival rate `μ(s, t)` of a
-spatio‑temporal point process.  It is evaluated independently of any
-self‑exciting interaction kernels.
-"""
-
 from __future__ import annotations
 
 from hawkesnest.background.base import BackgroundBase  # noqa: F401
@@ -14,8 +7,8 @@ from hawkesnest.background.spatiotemporal import (
     SeparableBackground,  # noqa: F401
     EntangledBackground,  # noqa: F401
 )
-from hawkesnest.background.temporal      import TemporalProfile, SinusoidProfile, StepProfile, SplineProfile, RandomGPProfile  # noqa: F401
-
+from hawkesnest.background.temporal      import TemporalProfile, SinusoidProfile, StepProfile, SplineProfile
+from hawkesnest.background.hetero_ladder import HeteroLadderBackground  
 
 __all__ = [
     "BackgroundBase",
@@ -27,4 +20,5 @@ __all__ = [
     "SinusoidProfile",
     "StepProfile",
     "SplineProfile",
+    "HeteroLadderBackground",
 ]

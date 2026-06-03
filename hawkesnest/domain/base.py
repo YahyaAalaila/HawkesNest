@@ -52,11 +52,5 @@ class SpatialDomain(abc.ABC):
         """
         return NotImplementedError
     
-    @abc.abstractmethod
-    def area(self) -> float:
-        """
-        Measure of the support (area or total length).
-        """
-        raise NotImplementedError
     
     

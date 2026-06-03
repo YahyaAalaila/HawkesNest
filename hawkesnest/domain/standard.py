@@ -1,6 +1,5 @@
 # Module implementing simple rectangular spatial domains.
 from typing import Tuple
-from geopy.distance import geodesic as geo
 import numpy as np
 
 from hawkesnest.domain.base import SpatialDomain
@@ -14,9 +13,7 @@ class RectangleDomain(SpatialDomain):
         return self._area
     
     def distance(self, u: Tuple[float, float], v: Tuple[float, float]) -> float:
-        """
-        Ellipsoidal geodesic distance in metres (uses WGS-84).
-        """
+        """Euclidean distance between two points in the domain."""
         dx = u[0] - v[0]
         dy = u[1] - v[1]
         return np.hypot(dx, dy)
