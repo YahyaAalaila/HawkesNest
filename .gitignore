@@ -1,0 +1,66 @@
+# Python caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+hn-test-env/
+
+# Build/install artifacts
+dist/
+build/
+*.egg-info/
+
+# Notebook state
+.ipynb_checkpoints/
+
+# Generated HawkesNest outputs
+outputs/
+exports/
+data/generated/
+plots/generated/
+paper_artifacts/
+hawkesnest_suites*/
+hawkesnest_easy_hard*/
+z_complexity_sweep*/
+
+# Local submissions and external worktrees
+submission*/
+submission*.zip
+external/
+
+# Local/OS files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Existing local experiment outputs
+results/
+quick_results/
+kde_plots/
+fig72style/
+/Experiments/
+csr_cache/
+ent_mid.parquet
+fig_*
+topology_metric_vs_nodes.png
+
+# Experimental / generated artifacts — not part of the release
+00_LEtstry/
+cache/
+exp3_gifs/
+out/
+plots/
+validate_events.csv
+hawkesnest/kernel.zip
+paper_appendix_A.tex
