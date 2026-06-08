@@ -1,0 +1,2 @@
+# Notebooks are executable documentation/demos, not core implementation.
+notebooks/*.ipynb linguist-documentation=true
