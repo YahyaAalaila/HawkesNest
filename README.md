@@ -21,7 +21,7 @@ HawkesNest is a configurable STPP/Hawkes DGP workbench for building, validating,
     <td align="center">
       <img src="assets/gifs/topo_evolution_evolution.gif" width="250"/>
       <br/>
-      <strong>Topology experiments under validation</strong>
+      <strong>Topology ladder</strong>
     </td>
   </tr>
 </table>
