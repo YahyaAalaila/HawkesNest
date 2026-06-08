@@ -120,7 +120,7 @@ Citation information will be added before archival release.
 
 ```bibtex
 @software{hawkesnest,
-  title = {HawkesNest: Synthetic Hawkes-Process Corpora for Spatio-Temporal Point-Process Evaluation},
+  title = {HawkesNest: A Multi-Axis Synthetic Benchmark for Spatiotemporal Pattern Complexity},
   author = {TBD},
   year = {2026},
   note = {Citation details forthcoming}
