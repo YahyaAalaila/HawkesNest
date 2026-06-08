@@ -112,9 +112,7 @@ See [docs/visualization.md](docs/visualization.md).
 - [Recipes](docs/recipes.md)
 - [Visualization](docs/visualization.md)
 - [Output schema](docs/output_schema.md)
-- [Seahorse integration](docs/seahorse_integration.md)
 - [Paper reproduction](docs/paper_reproduction.md)
-- [Development notes](docs/development_notes.md)
 
 ## Citation
 
