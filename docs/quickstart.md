@@ -2,10 +2,10 @@
 
 HawkesNest has two main entry points:
 
-- recipe mode for validated benchmark data you can generate immediately;
+- benchmark-suite mode for standard complexity ladders;
 - custom-DGP mode for composing your own synthetic spatio-temporal point process.
 
-The validated fast-path recipes are `EntanglementSuite` and `HeterogeneitySuite`. They are useful for reproducible stress tests, but they are not the boundary of HawkesNest. The configurable DGP layer is the core tool.
+The standard suites are `EntanglementSuite` and `HeterogeneitySuite`. Both are built on the same configurable DGP layer used for custom domains, backgrounds, kernels, marks, and adjacency structures.
 
 ## Install
 
@@ -21,9 +21,9 @@ For development and tests:
 pip install -e ".[dev]"
 ```
 
-## Recipe Mode
+## Benchmark Suite Mode
 
-Use validated recipes when you want reproducible benchmark data immediately.
+Use benchmark suites when you want named complexity levels with a stable generator interface.
 
 ```python
 from hawkesnest.suites import EntanglementSuite, HeterogeneitySuite
@@ -35,7 +35,7 @@ print(ent.events.head())
 print(het.metadata["simulator_class"])
 ```
 
-Recipe mode is the recommended path for Seahorse reproduction and paper-aligned stress tests.
+Suite mode is the shortest path to controlled entanglement and heterogeneity event streams.
 
 Generate one entanglement sequence:
 
@@ -44,7 +44,7 @@ python -m hawkesnest.cli generate entanglement \
   --level L2 \
   --n-events 50 \
   --seed 123 \
-  --out outputs/entanglement_demo
+  --out outputs/entanglement_l2
 ```
 
 Generate one heterogeneity sequence:
@@ -54,7 +54,7 @@ python -m hawkesnest.cli generate heterogeneity \
   --level H3 \
   --n-events 50 \
   --seed 123 \
-  --out outputs/heterogeneity_demo
+  --out outputs/heterogeneity_h3
 ```
 
 Generate a small corpus:
@@ -118,6 +118,6 @@ SimulatorConfig -> SimulatorConfig.build() -> HawkesSimulator -> thinning
 ## More
 
 - [Custom DGPs](custom_dgp.md)
-- [Recipes](recipes.md)
+- [Benchmark suites](benchmark_suites.md)
 - [Visualization](visualization.md)
 - [Output schema](output_schema.md)

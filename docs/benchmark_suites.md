@@ -1,15 +1,15 @@
-# Recipes
+# Benchmark Suites
 
-HawkesNest ships validated benchmark recipes for users who want reproducible stress-test data immediately:
+HawkesNest includes benchmark suites for controlled complexity axes:
 
-- `EntanglementSuite`: the ready-made suite3 recipe for space-time entanglement stress tests.
-- `HeterogeneitySuite`: the ready-made suite4 recipe for background heterogeneity stress tests.
+- `EntanglementSuite`: space-time coupling through traveling-wave triggering kernels.
+- `HeterogeneitySuite`: background-intensity variation across static, clustered, moving, and time-varying fields.
 
-The suites are important, but they are not the boundary of HawkesNest. They are the fastest path when you do not want to design your own DGP yet.
+Each suite exposes named levels and returns event data, simulator metadata, and optional CSV/JSONL/metadata exports. Custom DGPs use the same simulator configuration layer.
 
 ## EntanglementSuite
 
-`EntanglementSuite` is the validated suite3 recipe for space-time entanglement stress tests.
+`EntanglementSuite` varies space-time coupling while keeping the surrounding generator configuration fixed.
 
 ```python
 from hawkesnest.suites import EntanglementSuite
@@ -29,7 +29,7 @@ python -m hawkesnest.cli generate entanglement \
   --level L2 \
   --n-events 50 \
   --seed 123 \
-  --out outputs/entanglement_demo
+  --out outputs/entanglement_l2
 ```
 
 Generate a small corpus:
@@ -44,7 +44,7 @@ python -m hawkesnest.cli generate-corpus entanglement \
 
 ## HeterogeneitySuite
 
-`HeterogeneitySuite` is the validated suite4 recipe for background heterogeneity stress tests.
+`HeterogeneitySuite` varies the background intensity field while keeping the triggering kernel fixed.
 
 ```python
 from hawkesnest.suites import HeterogeneitySuite
@@ -64,9 +64,9 @@ python -m hawkesnest.cli generate heterogeneity \
   --level H3 \
   --n-events 50 \
   --seed 123 \
-  --out outputs/heterogeneity_demo
+  --out outputs/heterogeneity_h3
 ```
 
-## Topology Recipes
+## Topology Axis
 
-Topology-oriented recipes and GIFs are experimental and under validation. They are useful for exploration, but they are not yet part of the stable validated public recipe layer.
+Topology appears in the visual ladder and in the 4D complexity sweep documented in [paper_reproduction.md](paper_reproduction.md). The public quickstart focuses on the two suite classes exported by `hawkesnest.suites`: `EntanglementSuite` and `HeterogeneitySuite`.

@@ -1,6 +1,6 @@
 # Visualization
 
-HawkesNest is designed to be inspected visually. Use these diagnostics to check event clouds, suite-level differences, and background intensity surfaces before treating generated data as benchmark material.
+HawkesNest includes visual diagnostics for event clouds, suite-level differences, and background intensity surfaces.
 
 <table align="center">
   <tr>
@@ -17,7 +17,7 @@ HawkesNest is designed to be inspected visually. Use these diagnostics to check 
     <td align="center">
       <img src="../assets/gifs/topo_evolution_evolution.gif" width="250"/>
       <br/>
-      <strong>Topology experiments under validation</strong>
+      <strong>Topology ladder</strong>
     </td>
   </tr>
 </table>
@@ -92,13 +92,13 @@ fig.savefig("outputs/events_3d.png", dpi=160)
 
 ## CLI Visualization
 
-The CLI can also visualize exported recipe outputs:
+The CLI can also visualize exported suite outputs:
 
 ```bash
 python -m hawkesnest.cli visualize \
-  outputs/entanglement_demo/events.jsonl \
+  outputs/entanglement_l2/events.jsonl \
   --kind space-time \
-  --out outputs/entanglement_demo/space_time.png
+  --out outputs/entanglement_l2/space_time.png
 ```
 
 GIF animation support (`plot_kde_gif`) is available in `hawkesnest.utils.viz` and requires `imageio`. The complexity-ladder GIFs above were generated with this utility.

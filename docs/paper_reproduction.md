@@ -1,12 +1,12 @@
 # Paper Reproduction
 
-This page documents the public path for reproducing the paper's 4D complexity sweep and index-validation artifacts.
+This page documents the command path for the paper's 4D complexity sweep and index-validation artifacts.
 
-The full 4D sweep is expensive. It was not rerun during the patch that added this reproduction path; only a tiny smoke test was run.
+The full 4D sweep is computationally expensive. Use the minimal operational check below to verify the command path before launching the full grid.
 
 ## 4D Complexity Sweep
 
-Generate the paper-aligned `results_4d.csv`:
+Generate the 4D `results_4d.csv`:
 
 ```bash
 python scripts/sweeps_complexity.py \
@@ -111,14 +111,14 @@ results/paper_complexity/paper_artifacts/figs_4d/tables/interaction_mass.csv
 results/paper_complexity/paper_artifacts/figs_4d/tables/interaction_mass.md
 ```
 
-## Tiny Smoke Test
+## Minimal Operational Check
 
-For operational checks, use a tiny grid instead of the full paper sweep:
+For command-path checks, use a reduced grid instead of the full paper sweep:
 
 ```bash
 python scripts/sweeps_complexity.py \
   --mode full \
-  --out /tmp/hawkesnest_paper_smoke/results_4d.csv \
+  --out /tmp/hawkesnest_paper_check/results_4d.csv \
   --replicates 1 \
   --T 0.5 \
   --lambda0 2 \
@@ -135,12 +135,12 @@ python scripts/sweeps_complexity.py \
   --fail-fast
 ```
 
-Then run the analysis smoke checks:
+Then run the analysis checks:
 
 ```bash
 python scripts/analysis/exp2_factorial_analyze.py \
-  --results-csv /tmp/hawkesnest_paper_smoke/results_4d_full/results_4d.csv \
-  --out-dir /tmp/hawkesnest_paper_smoke/analysis_factorial \
+  --results-csv /tmp/hawkesnest_paper_check/results_4d_full/results_4d.csv \
+  --out-dir /tmp/hawkesnest_paper_check/analysis_factorial \
   --replicates-col replicate \
   --theta-cols theta_het,theta_ent,theta_topo,theta_graph \
   --baseline 0.0 \
@@ -152,8 +152,8 @@ python scripts/analysis/exp2_factorial_analyze.py \
 
 ```bash
 python scripts/analysis/exp2_factorial_anova.py \
-  --results-csv /tmp/hawkesnest_paper_smoke/results_4d_full/results_4d.csv \
-  --out-dir /tmp/hawkesnest_paper_smoke/anova \
+  --results-csv /tmp/hawkesnest_paper_check/results_4d_full/results_4d.csv \
+  --out-dir /tmp/hawkesnest_paper_check/anova \
   --theta-cols theta_het,theta_ent,theta_topo,theta_graph \
   --alpha-cols alpha_het_bg,alpha_ent_mi,alpha_topo,alpha_graph \
   --rep-col replicate
@@ -161,8 +161,8 @@ python scripts/analysis/exp2_factorial_anova.py \
 
 ```bash
 python scripts/analysis/exp_2_paper_artifacts_4d.py \
-  --results-csv /tmp/hawkesnest_paper_smoke/results_4d_full/results_4d.csv \
-  --out-root /tmp/hawkesnest_paper_smoke/paper_artifacts \
+  --results-csv /tmp/hawkesnest_paper_check/results_4d_full/results_4d.csv \
+  --out-root /tmp/hawkesnest_paper_check/paper_artifacts \
   --theta-cols theta_het,theta_ent,theta_topo,theta_graph \
   --metric-cols alpha_het_bg,alpha_ent_mi,alpha_topo,alpha_graph \
   --baseline 0.0 \

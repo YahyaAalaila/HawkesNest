@@ -1,10 +1,10 @@
-# HawkesNest
+<h1 align="center">HawkesNest</h1>
 
 <p align="center">
   <img src="assets/logo.png" alt="HawkesNest logo" width="220"/>
 </p>
 
-HawkesNest is a configurable STPP/Hawkes DGP workbench for building, validating, exporting, and visually inspecting synthetic spatio-temporal event streams.
+HawkesNest is a configurable synthetic benchmark and DGP workbench for spatio-temporal point-process models. It provides controlled Hawkes/STPP generators, benchmark suites, export utilities, and visual diagnostics for studying complexity axes such as entanglement, heterogeneity, topology, and cross-type interaction.
 
 <table align="center">
   <tr>
@@ -28,14 +28,14 @@ HawkesNest is a configurable STPP/Hawkes DGP workbench for building, validating,
 
 ## Why HawkesNest
 
-Benchmarks for spatio-temporal point-process models often rely on opaque real-world datasets. HawkesNest flips that workflow: define the data-generating process directly, inspect it visually, and generate event streams from a known simulator path.
+Real-world event datasets often entangle spatial structure, temporal dynamics, marks, and network effects in ways that are hard to isolate. HawkesNest makes those factors explicit: define the data-generating process, inspect its intensity and event geometry, then generate event streams with known simulator settings.
 
-HawkesNest includes validated fast-path recipes for reproducible stress-test data:
+The benchmark suites expose controlled complexity ladders:
 
-- `EntanglementSuite`: suite3 space-time entanglement stress tests.
-- `HeterogeneitySuite`: suite4 background heterogeneity stress tests.
+- `EntanglementSuite`: space-time coupling through traveling-wave triggering kernels.
+- `HeterogeneitySuite`: background-intensity variation across static, clustered, moving, and time-varying fields.
 
-These suites are important, but they are not the boundary of HawkesNest. The core tool is the configurable DGP layer: domains, background intensities, triggering kernels, marks, adjacency matrices, simulator settings, export utilities, and visualization diagnostics.
+The same configurable DGP layer supports custom domains, background intensities, triggering kernels, marks, adjacency matrices, simulator settings, export formats, and visualization diagnostics.
 
 ## Install
 
@@ -49,14 +49,14 @@ For development and tests:
 pip install -e ".[dev]"
 ```
 
-## Recipe Quickstart
+## Suite Quickstart
 
 ```bash
 python -m hawkesnest.cli generate entanglement \
   --level L2 \
   --n-events 50 \
   --seed 123 \
-  --out outputs/entanglement_demo
+  --out outputs/entanglement_l2
 ```
 
 ```bash
@@ -64,10 +64,10 @@ python -m hawkesnest.cli generate heterogeneity \
   --level H3 \
   --n-events 50 \
   --seed 123 \
-  --out outputs/heterogeneity_demo
+  --out outputs/heterogeneity_h3
 ```
 
-See [docs/quickstart.md](docs/quickstart.md) and [docs/recipes.md](docs/recipes.md).
+See [docs/quickstart.md](docs/quickstart.md) and [docs/benchmark_suites.md](docs/benchmark_suites.md).
 
 ## Custom-DGP Quickstart
 
@@ -109,7 +109,7 @@ See [docs/visualization.md](docs/visualization.md).
 
 - [Quickstart](docs/quickstart.md)
 - [Custom DGPs](docs/custom_dgp.md)
-- [Recipes](docs/recipes.md)
+- [Benchmark suites](docs/benchmark_suites.md)
 - [Visualization](docs/visualization.md)
 - [Output schema](docs/output_schema.md)
 - [Paper reproduction](docs/paper_reproduction.md)

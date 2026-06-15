@@ -1,6 +1,6 @@
 # Custom DGPs
 
-HawkesNest is a configurable STPP/Hawkes DGP workbench. The validated `EntanglementSuite` and `HeterogeneitySuite` recipes are fast paths, not the boundary of the tool.
+HawkesNest is a configurable STPP/Hawkes DGP workbench. The benchmark suites provide standard generator configurations, while the same DGP layer can be composed directly for custom experiments.
 
 The core configurable DGP concepts include:
 
