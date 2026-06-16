@@ -116,13 +116,14 @@ See [docs/visualization.md](docs/visualization.md).
 
 ## Citation
 
-Citation information will be added before archival release.
-
 ```bibtex
-@software{hawkesnest,
-  title = {HawkesNest: A Multi-Axis Synthetic Benchmark for Spatiotemporal Pattern Complexity},
-  author = {TBD},
-  year = {2026},
-  note = {Citation details forthcoming}
+@misc{aalaila2026hawkesnestmultiaxissyntheticbenchmark,
+      title={HawkesNest: A Multi-Axis Synthetic Benchmark for Spatiotemporal Pattern Complexity},
+      author={Yahya Aalaila and Sumantrak Mukherjee and Gerrit Großmann and Sebastian Vollmer},
+      year={2026},
+      eprint={2606.16863},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2606.16863},
 }
 ```
