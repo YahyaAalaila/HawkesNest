@@ -1,0 +1,10 @@
+.git
+.venv
+.env
+__pycache__
+*.pyc
+hawkesnest.egg-info
+outputs/
+.pytest_cache/
+.coverage
+htmlcov/

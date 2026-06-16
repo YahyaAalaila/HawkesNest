@@ -6,6 +6,14 @@
 
 HawkesNest is a configurable synthetic benchmark and DGP workbench for spatio-temporal point-process models. It provides controlled Hawkes/STPP generators, benchmark suites, export utilities, and visual diagnostics for studying complexity axes such as entanglement, heterogeneity, topology, and cross-type interaction.
 
+<p align="center">
+  <img src="https://img.shields.io/badge/python-3.8+-blue.svg" alt="Python 3.8+">
+  <img src="https://img.shields.io/badge/PyTorch-2.6.0+-ee4c2c.svg" alt="PyTorch">
+  <img src="https://img.shields.io/badge/NumPy-1.21+-013243.svg" alt="NumPy">
+  <img src="https://img.shields.io/badge/SciPy-1.7+-8caa39.svg" alt="SciPy">
+  <img src="https://img.shields.io/badge/NetworkX-2.6+-00a0dc.svg" alt="NetworkX">
+</p>
+
 <table align="center">
   <tr>
     <td align="center">
@@ -39,6 +47,20 @@ The same configurable DGP layer supports custom domains, background intensities,
 
 ## Install
 
+### Option 1: Local Virtual Environment
+
+It is recommended to create a virtual environment first:
+
+```bash
+python -m venv .venv
+# On Windows
+.venv\Scripts\activate
+# On Linux/macOS
+source .venv/bin/activate
+```
+
+Then install the package:
+
 ```bash
 pip install -e .
 ```
@@ -48,6 +70,21 @@ For development and tests:
 ```bash
 pip install -e ".[dev]"
 ```
+
+### Option 2: Docker Deployment
+
+To avoid platform-specific environment issues or file system errors, you can run HawkesNest entirely inside a Docker container.
+
+Build the image:
+```bash
+docker build -t hawkesnest .
+```
+
+Run the container (mounting the `outputs` directory to save your generated data locally):
+```bash
+docker run -it --rm -v $(pwd)/outputs:/app/outputs hawkesnest bash
+```
+See the [Docker Deployment Guide](docs/docker.md) for more details on running the CLI or custom scripts inside Docker.
 
 ## Suite Quickstart
 
@@ -113,6 +150,7 @@ See [docs/visualization.md](docs/visualization.md).
 - [Visualization](docs/visualization.md)
 - [Output schema](docs/output_schema.md)
 - [Paper reproduction](docs/paper_reproduction.md)
+- [Docker Deployment](docs/docker.md)
 
 ## Citation
 
