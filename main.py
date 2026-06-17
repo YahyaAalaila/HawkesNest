@@ -30,10 +30,10 @@ sim_config = {
             "type":"separable",
             "temporal_decay":0.4,
             "spatial_sigma":0.05,
-            "adjacency":[[0.2],],
-            "lambda_max": 25.0,
         }
-    ]
+    ],
+    "adjacency":[[0.2],],
+    "lambda_max": 25.0,
 }
 
 ## 2. build simulator

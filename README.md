@@ -8,7 +8,6 @@ HawkesNest is a configurable synthetic benchmark and DGP workbench for spatio-te
 
 <p align="center">
   <img src="https://img.shields.io/badge/python-3.8+-blue.svg" alt="Python 3.8+">
-  <img src="https://img.shields.io/badge/PyTorch-2.6.0+-ee4c2c.svg" alt="PyTorch">
   <img src="https://img.shields.io/badge/NumPy-1.21+-013243.svg" alt="NumPy">
   <img src="https://img.shields.io/badge/SciPy-1.7+-8caa39.svg" alt="SciPy">
   <img src="https://img.shields.io/badge/NetworkX-2.6+-00a0dc.svg" alt="NetworkX">

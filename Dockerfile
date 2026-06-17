@@ -16,7 +16,7 @@ WORKDIR /app
 COPY . .
 
 # Install the package and its dependencies using uv
-RUN uv pip install --system ".[all,dev]"
+RUN uv pip install --system ".[dev]"
 
 # Ensure the output directory exists
 RUN mkdir -p outputs

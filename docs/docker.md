@@ -14,7 +14,7 @@ This command will:
 - Download a lightweight Python 3.10 image.
 - Install the fast package manager `uv`.
 - Copy the HawkesNest source code into the container.
-- Install the package and all its `[all]` and `[dev]` dependencies.
+- Install the package and all its `[dev]` dependencies.
 
 ## 2. Run the Container
 

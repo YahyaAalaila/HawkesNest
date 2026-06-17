@@ -26,7 +26,6 @@ dependencies = [
   "geopy>=2.2",
   "tqdm>=4.62",
   "matplotlib>=3.4",
-  "torch>=2.6.0",
   "PyYAML>=6.0.2,<7"
 ]
 
@@ -48,4 +47,5 @@ hawkesnest = "hawkesnest.cli:cli"
 
 [tool.hatch.build.targets.wheel]
 packages = ["hawkesnest"]
+artifacts = ["hawkesnest/datasets/templates/*.yml"]
 
